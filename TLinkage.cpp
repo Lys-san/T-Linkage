@@ -52,16 +52,8 @@ int main() {
     std::cout << "[DEBUG] Computed " << pm.size() << " preference sets" << std::endl;
     std::cout << "[DEBUG] Each PS considers " << pm[0].size() << " models" << std::endl;
 
-    std::cout << "-----" << std::endl;
-    for(auto line : pm) {
-        for(auto value : line) {
-            std::cout << value << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "-----" << std::endl;
 
-//    std::cout << "[DEBUG] Linking clusters, please wait... " << std::endl;
+    std::cout << "[DEBUG] Linking clusters, please wait... " << std::endl;
 
 
     // link until model is found
@@ -70,6 +62,7 @@ int main() {
     while(linkable) {
         linkIndex++;
         linkable = link(clusters, dataSet, pm, models);
+        std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
 

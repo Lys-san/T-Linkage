@@ -309,8 +309,6 @@ bool link(std::vector<Cluster> &clusters,
     int i          = 0;     // first loop index
     int j          = 0;     // second loop index
 
-    std::cout << "[DEBUG] ---------" << std::endl;
-
     // find closest clusters according to jaccard distance
     for(auto c1 : clusters) {
         j = 0;
@@ -318,9 +316,10 @@ bool link(std::vector<Cluster> &clusters,
         // for each other buffer
         for(auto c2 : clusters) {
             auto pf2 = c2.computePF(models);
-            std::cout << "[DEBUG] PFs are size " << pf1.size() << " " << pf2.size() << std::endl;;
             // compare indexes so we don't try to merge a cluster with itself
+
             double dist = i != j ? tanimoto(pf1, pf2) : 1.;
+//            std::cout << "dist = " << dist << std::endl;
 
             if(dist < minDist) {
                 minDist = dist;
