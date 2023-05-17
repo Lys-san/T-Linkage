@@ -64,27 +64,27 @@ int main() {
 //    std::cout << "[DEBUG] Linking clusters, please wait... " << std::endl;
 
 
-//    // link until model is found
-//    auto linkable = true;
-//    int linkIndex = 0;
-//    while(linkable) {
-//        linkIndex++;
-//        linkable = link(clusters, dataSet, pm, models);
-//    }
-//    auto end = chrono::steady_clock::now();
+    // link until model is found
+    auto linkable = true;
+    int linkIndex = 0;
+    while(linkable) {
+        linkIndex++;
+        linkable = link(clusters, dataSet, pm, models);
+    }
+    auto end = chrono::steady_clock::now();
 
-//    // display models
-//    validateNBiggestClusters(N_MODELS, clusters);
-////    validateBiggestClusters_2(clusters, dataSet.size());
-////    validateBiggestClusters(clusters);
+    // display models
+    validateNBiggestClusters(N_MODELS, clusters);
+//    validateBiggestClusters_2(clusters, dataSet.size());
+//    validateBiggestClusters(clusters);
 
-//    auto resWindow = Imagine::openWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "results", WINDOW_WIDTH, 10);
-//    Imagine::setActiveWindow(resWindow);
-//    Cluster::displayValidated(clusters);
-//    Cluster::displayModels(clusters);
+    auto resWindow = Imagine::openWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "results", WINDOW_WIDTH, 10);
+    Imagine::setActiveWindow(resWindow);
+    Cluster::displayValidated(clusters);
+    Cluster::displayModels(clusters);
 
-//    std::cout << "[DEBUG] Ending with " << clusters.size() << " clusters after " << linkIndex << " linkages." << std::endl;
-//    cout << "Time took : " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << std::endl;
+    std::cout << "[DEBUG] Ending with " << clusters.size() << " clusters after " << linkIndex << " linkages." << std::endl;
+    cout << "Time took : " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << std::endl;
     Imagine::endGraphics();
     return 0;
 }

@@ -111,9 +111,12 @@ public:
 
     Point extractPointModel();
 
-    /** Computes and returns the intersection of the PS of all the points
-     *  contained in the cluster. */
-    std::vector<bool> computePS(const std::vector<Line> &models);
+    /**
+     *  Computes and returns the preference function of the cluster,
+     *  defined as the vector of PF minimums for each point contained
+     *  in the cluster.
+     */
+    std::vector<double> computePF(const std::vector<Line> &models);
 
     /**
      * Returns the intersection of the two given vectors.
@@ -186,11 +189,25 @@ double jaccard(
         std::set<Line> b
         );
 
+
+/**
+ * Returns the tanomoto distance (between 0 and 1) from 2
+ * vectors a and b.
+ *
+ * @param a
+ * @param b
+ * @return
+ */
+double tanimoto(
+        std::vector<double> a,
+        std::vector<double> b
+        );
+
 /** Performs linking action and updates given parameters. */
 bool link(
         std::vector<Cluster> &clusters,
         std::set<Point> &dataSet,
-        const std::vector<std::vector<bool>> &pm,
+        const std::vector<std::vector<double>> &pm,
         const std::vector<Line> &models
         );
 

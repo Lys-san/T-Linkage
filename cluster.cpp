@@ -171,12 +171,25 @@ bool Cluster::operator==(const Cluster &other) const {
     return this->points() == other.points();
 }
 
-std::vector<bool> Cluster::computePS(const std::vector<Line> &models) {
-    std::vector<bool> ps;
-    for(auto point : _points) {
-        auto pf = computePreferenceFunctionFor(point, models);
-        ps.emplace_back(*std::min_element(pf.begin(), pf.end()));
+std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
+    assert(size() > 0);
+
+    std::vector<double> ps;
+    if(size() == 1) {
+        return computePreferenceFunctionFor(_points[0], models);
     }
+
+    for(auto i = 0; i < models.size(); i++) {
+        auto min = computePreferenceFunctionFor(_points[0], models)[i];
+        for(auto point : _points) {
+            auto tmp = computePreferenceFunctionFor(point, models)[i];
+            if(tmp < min) {
+                min = tmp;
+            }
+        }
+        ps.emplace_back(min);
+    }
+
     return ps;
 }
 
@@ -211,14 +224,6 @@ bool Cluster::isModel() {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<std::vector<double>> computePM(const std::vector<Line> &models, const std::set<Point> dataSet) {
-    std::vector<std::vector<double>> pm;
-
-    for(auto point:dataSet) {
-        pm.emplace_back(computePreferenceFunctionFor(point, models));
-    }
-    return pm;
-}
 
 std::map<Point, std::set<Line>> extractPSfromPM(const std::set<Point> &dataSet, const std::vector<Line> &models, const std::vector<std::vector<bool>> &pm) {
     std::map<Point, std::set<Line>> preferenceSets;
@@ -250,6 +255,15 @@ std::map<Point, std::set<Line>> extractPSfromPM(const std::set<Point> &dataSet, 
     return preferenceSets;
 }
 
+std::vector<std::vector<double>> computePM(const std::vector<Line> &models, const std::set<Point> dataSet) {
+    std::vector<std::vector<double>> pm;
+
+    for(auto point:dataSet) {
+        pm.emplace_back(computePreferenceFunctionFor(point, models));
+    }
+    return pm;
+}
+
 std::vector<std::vector<bool>> transposatePM(const std::vector<std::vector<bool>> &pm) {
     std::vector<std::vector<bool>> transposate(pm.begin()->size(), std::vector<bool>(pm.size(), false));
 
@@ -271,13 +285,22 @@ double jaccard(std::set<Line> a, std::set<Line> b) {
     return (u_size - n.size())/u_size;
 }
 
+double tanimoto(std::vector<double> a, std::vector<double> b) {
+    assert(a.size() == b.size());
+
+    double a_squaredNorm = std::inner_product(a.begin(), a.end(), a.begin(), 0.0L);
+    double b_squaredNorm = std::inner_product(b.begin(), b.end(), b.begin(), 0.0L);
+
+    double ab_innerProduct = std::inner_product(a.begin(), a.end(), b.begin(), 0.0L);
+
+    return 1 - ab_innerProduct/(a_squaredNorm + b_squaredNorm - ab_innerProduct);
+}
+
 bool link(std::vector<Cluster> &clusters,
           std::set<Point> &dataSet,
-          const std::vector<std::vector<bool>> &pm,
+          const std::vector<std::vector<double>> &pm,
           const std::vector<Line> &models
           ) {
-
-    auto preferenceSets = extractPSfromPM(dataSet, models, pm); // map of point/set
 
     int iFirst     = 0;     // index of first cluster to link
     int iSecond    = 0;     // index of second cluster to link
@@ -286,16 +309,18 @@ bool link(std::vector<Cluster> &clusters,
     int i          = 0;     // first loop index
     int j          = 0;     // second loop index
 
+    std::cout << "[DEBUG] ---------" << std::endl;
+
     // find closest clusters according to jaccard distance
     for(auto c1 : clusters) {
         j = 0;
-        auto ps1 = c1.computePS(dataSet, preferenceSets);
+        auto pf1 = c1.computePF(models);
         // for each other buffer
         for(auto c2 : clusters) {
-            auto ps2 = c2.computePS(dataSet, preferenceSets);
-
+            auto pf2 = c2.computePF(models);
+            std::cout << "[DEBUG] PFs are size " << pf1.size() << " " << pf2.size() << std::endl;;
             // compare indexes so we don't try to merge a cluster with itself
-            double dist = i != j ? jaccard(ps1, ps2) : 1.;
+            double dist = i != j ? tanimoto(pf1, pf2) : 1.;
 
             if(dist < minDist) {
                 minDist = dist;
