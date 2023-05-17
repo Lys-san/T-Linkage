@@ -171,27 +171,13 @@ bool Cluster::operator==(const Cluster &other) const {
     return this->points() == other.points();
 }
 
-std::set<Line> Cluster::computePS(const std::set<Point> &dataSet, const std::map<Point, std::set<Line>> &preferenceSets) {
-    std::vector<std::set<Line>> clustersPointsPS;
-
+std::vector<bool> Cluster::computePS(const std::vector<Line> &models) {
+    std::vector<bool> ps;
     for(auto point : _points) {
-        auto ps = preferenceSets.at(point);
-
-        clustersPointsPS.emplace_back(ps);
+        auto pf = computePreferenceFunctionFor(point, models);
+        ps.emplace_back(*std::min_element(pf.begin(), pf.end()));
     }
-
-    // intersection
-    std::set<Line> inter = clustersPointsPS[0]; // first PS
-    std::set<Line> res;
-    for(auto ps : clustersPointsPS) { // loop on each PS
-        res = makeInter(inter, ps);
-
-        // put res values into inter for next intersection operation
-        inter.clear();
-        inter.insert(res.begin(), res.end());
-    }
-
-    return inter;
+    return ps;
 }
 
 std::set<Line> Cluster::makeInter(const std::set<Line> &a, const std::set<Line> &b) {
@@ -225,13 +211,12 @@ bool Cluster::isModel() {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<std::vector<bool>> computePM(const std::vector<Line> &models, const std::set<Point> dataSet) {
-    std::vector<std::vector<bool>> pm(0, std::vector<bool>(0, false));
+std::vector<std::vector<double>> computePM(const std::vector<Line> &models, const std::set<Point> dataSet) {
+    std::vector<std::vector<double>> pm;
 
-    for(auto model : models) {
-        pm.emplace_back(model.computeBooleanConsensusSet(dataSet));
+    for(auto point:dataSet) {
+        pm.emplace_back(computePreferenceFunctionFor(point, models));
     }
-    pm = transposatePM(pm);
     return pm;
 }
 

@@ -1,7 +1,7 @@
 /**
  * Author        : Lysandre M. (lysandre.macke@enpc.fr)
  * Created       : 04-27-2023
- * Last modified : 05-15-2023 */
+ * Last modified : 05-17-2023 */
 
 #ifndef LINE_H
 #define LINE_H
@@ -100,9 +100,6 @@ public:
      *  For a Line object, this constant is set to 2. */
     int mmss();
 
-    /** Computes and return the consensus set of the model according to the given dataSet*/
-    std::set<Point> computeConsensusSet(const std::set<Point> &dataSet);
-
     /** Value of the Preferencefunction according to the given point. */
     double PFValue(const Point &p);
 
@@ -155,12 +152,12 @@ std::vector<bool> computePreferenceSetFor(const Point &point, const std::set<Lin
  * Compute the preference function of the point, which stores the matching degree for each model.
  *
  * @param pointt the point
- * @param modelSet a set o model
+ * @param models the models
  * @return a vector of double (between 0 and 1). The i-th element of the vector corresponds to
  * the i-th element of the entry set.
  */
 std::vector<double> computePreferenceFunctionFor(
         const Point &point,
-        const std::set<Line> &modelSet
+        const std::vector<Line> &models
         );
 #endif // LINE_H

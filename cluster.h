@@ -1,7 +1,7 @@
 /**
  * Author        : Lysandre M. (lysandre.macke@enpc.fr)
  * Created       : 04-27-2023
- * Last modified : 05-15-2023 */
+ * Last modified : 05-17-2023 */
 
 #ifndef CLUSTER_H
 #define CLUSTER_H
@@ -113,11 +113,7 @@ public:
 
     /** Computes and returns the intersection of the PS of all the points
      *  contained in the cluster. */
-    std::set<Line> computePS(
-            const std::set<Point> &dataSet,
-            const std::map<Point,
-            std::set<Line>> &preferenceSets
-            );
+    std::vector<bool> computePS(const std::vector<Line> &models);
 
     /**
      * Returns the intersection of the two given vectors.
@@ -162,14 +158,8 @@ private:
 
 std::map<Point, int> generatePointIndexes();
 
-///** Generates preference matrix from cluster */
-//std::vector<std::vector<bool>> computePM(
-//        const std::vector<Cluster> &clusters,
-//        const std::set<Point> dataSet
-//        );
-
 /** Generates preference matrix of data set */
-std::vector<std::vector<bool>> computePM(
+std::vector<std::vector<double>> computePM(
         const std::vector<Line> &models,
         const std::set<Point> dataSet
         );

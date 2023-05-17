@@ -106,10 +106,8 @@ int Line::mmss() {
     return 2;
 }
 
-
-
 double Line::PFValue(const Point &p) {
-    return distance(*this, p) < 5*TAU ? exp(-distance(*this, p)) : 0;
+    return distance(*this, p) < 5*TAU ? exp(-distance(*this, p)/TAU) : 0;
 }
 
 std::set<Point> Line::generateStarModel() {
@@ -193,4 +191,13 @@ double distance(Line line, Point point) {
     double num = std::abs(a*x -y + b);
     double den = std::sqrt(a*a + 1);
     return num/den;
+}
+
+std::vector<double> computePreferenceFunctionFor(const Point &point, const std::vector<Line> &models) {
+    std::vector<double> pf;
+
+    for(auto model : models) {
+        pf.emplace_back(model.PFValue(point));
+    }
+    return pf;
 }
