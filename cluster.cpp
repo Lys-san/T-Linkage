@@ -64,7 +64,7 @@ std::vector<Cluster> Cluster::clusterizePairs(const std::set<Point> &points) {
         clusters.emplace_back(cluster);
     }
     std::cout<< "[DEBUG] End of random sampling. Generated "
-             << clusters.size()  << " clusters for total data of size  : " << points.size() << std::endl;
+             << clusters.size()  << " models for total data of size  : " << points.size() << std::endl;
     return clusters;
 }
 
@@ -172,29 +172,31 @@ bool Cluster::operator==(const Cluster &other) const {
 }
 
 std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
-    auto start = std::chrono::steady_clock::now();
-
     assert(size() > 0);
 
-    std::vector<double> ps;
+    std::vector<double> pf;
     if(size() == 1) {
         return computePreferenceFunctionFor(_points[0], models);
     }
+
+    // loop on preference functions
     for(auto i = 0; i < models.size(); i++) {
-        auto min = computePreferenceFunctionFor(_points[0], models)[i];
+        auto model = models.at(i);
+        auto min = model.PFValue(_points.at(0));
+        // compare for each point to find min
         for(auto point : _points) {
-            auto tmp = computePreferenceFunctionFor(point, models)[i];
+            //auto tmp = computePreferenceFunctionFor(point, models)[i];
+            auto model = models.at(i);
+            auto tmp = model.PFValue(point);
             if(tmp < min) {
                 min = tmp;
             }
         }
-        ps.emplace_back(min);
+        // the final value is the found minimum
+        pf.emplace_back(min);
     }
 
-    auto end = std::chrono::steady_clock::now();
-    std::cout << "PF : " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns" << std::endl;
-
-    return ps;
+    return pf;
 }
 
 std::set<Line> Cluster::makeInter(const std::set<Line> &a, const std::set<Line> &b) {
@@ -278,19 +280,7 @@ std::vector<std::vector<bool>> transposatePM(const std::vector<std::vector<bool>
     return transposate;
 }
 
-double jaccard(std::set<Line> a, std::set<Line> b) {
-    std::set<Line> u; // union
-
-    double u_size = a.size() + b.size();
-
-    std::set<Line> n; // intersection
-    n = Cluster::makeInter(a, b);
-
-    return (u_size - n.size())/u_size;
-}
-
 double tanimoto(std::vector<double> a, std::vector<double> b) {
-    auto start = std::chrono::steady_clock::now();
 
     assert(a.size() == b.size());
 
@@ -299,13 +289,8 @@ double tanimoto(std::vector<double> a, std::vector<double> b) {
 
     double ab_innerProduct = std::inner_product(a.begin(), a.end(), b.begin(), 0.0L);
 
-    auto end = std::chrono::steady_clock::now();
-    std::cout << "Tanimoto : " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns" << std::endl;
 
     return 1 - ab_innerProduct/(a_squaredNorm + b_squaredNorm - ab_innerProduct);
-
-
-
 }
 
 bool link(std::vector<Cluster> &clusters,
@@ -375,6 +360,13 @@ void validateBiggestClusters(std::vector<Cluster> &clusters) {
 
     std::sort(clusters.begin(), clusters.end());
     std::reverse(clusters.begin(), clusters.end());
+
+    // for debug, remove after (or maybe not...?)
+    std::cout << "[DEBUG] Final cluster sizes : " << std::endl;
+    for(auto cluster : clusters) {
+        std::cout << cluster.size() << " ";
+    }
+    std::cout << std::endl;
 
     std::vector<int> sizes;
 

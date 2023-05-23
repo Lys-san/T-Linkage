@@ -26,3 +26,23 @@ T-Linkage takes ~ 25 s (~70 iterations)
 Is it the algorithm that is much slower, or just me that coded like a 9 year old kid ? 
 In any case, the Tanimoto distance computation is ~3x longer than the jaccard one (because we need to do 3 inner products of complexity N/2), and the computePF function requires a LOT of calculations since we search for min values for each point of the cluster.
 
+EDIT commit 
+
+I fixed the slow program behaviour. This was (it always is) quite stupid, in fact I computed unnecessary preference functions in the link function, ans since this was done quite a lot of time, this explains why the program was awfully slow. 
+The program now works fine and in a correct time. Here are some times taken by the T-linkage program to ind an outlier free star model (30 inliers per line).
+
+|Times   |
+|--------|
+|17201 ms|
+|17005 ms|
+|17631 ms|
+
+Each model is always recognized.
+
+Whereas the J-Linkage has the following times : 
+
+|Times   |
+|--------|
+|32865 ms|
+|34400 ms|
+|31620 ms|
