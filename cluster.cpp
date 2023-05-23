@@ -172,13 +172,14 @@ bool Cluster::operator==(const Cluster &other) const {
 }
 
 std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
+    auto start = std::chrono::steady_clock::now();
+
     assert(size() > 0);
 
     std::vector<double> ps;
     if(size() == 1) {
         return computePreferenceFunctionFor(_points[0], models);
     }
-
     for(auto i = 0; i < models.size(); i++) {
         auto min = computePreferenceFunctionFor(_points[0], models)[i];
         for(auto point : _points) {
@@ -189,6 +190,9 @@ std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
         }
         ps.emplace_back(min);
     }
+
+    auto end = std::chrono::steady_clock::now();
+    std::cout << "PF : " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns" << std::endl;
 
     return ps;
 }
@@ -286,6 +290,8 @@ double jaccard(std::set<Line> a, std::set<Line> b) {
 }
 
 double tanimoto(std::vector<double> a, std::vector<double> b) {
+    auto start = std::chrono::steady_clock::now();
+
     assert(a.size() == b.size());
 
     double a_squaredNorm = std::inner_product(a.begin(), a.end(), a.begin(), 0.0L);
@@ -293,7 +299,13 @@ double tanimoto(std::vector<double> a, std::vector<double> b) {
 
     double ab_innerProduct = std::inner_product(a.begin(), a.end(), b.begin(), 0.0L);
 
+    auto end = std::chrono::steady_clock::now();
+    std::cout << "Tanimoto : " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns" << std::endl;
+
     return 1 - ab_innerProduct/(a_squaredNorm + b_squaredNorm - ab_innerProduct);
+
+
+
 }
 
 bool link(std::vector<Cluster> &clusters,
@@ -358,7 +370,7 @@ void validateNBiggestClusters(unsigned int n, std::vector<Cluster> &clusters) {
     }
 }
 
-void validateBiggestClusters(std::vector<Cluster> &clusters) {
+void validateBiggestClusters(std::vector<Cluster> &clusters) {    
     assert(clusters.size() > 0);
 
     std::sort(clusters.begin(), clusters.end());
@@ -369,6 +381,8 @@ void validateBiggestClusters(std::vector<Cluster> &clusters) {
     for(auto cluster : clusters) {
         sizes.emplace_back(cluster.size());
     }
+    // add dummy cluster to cater for outliers-ree case
+    sizes.emplace_back(1);
 
     std::vector<int> diff;
     std::adjacent_difference(sizes.begin(), sizes.end(), sizes.begin());

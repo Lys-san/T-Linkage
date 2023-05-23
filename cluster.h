@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <set>
+#include <chrono> // remove after testing
 
 #include "point.h"
 #include "model.h"

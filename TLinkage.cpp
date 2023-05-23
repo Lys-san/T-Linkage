@@ -27,13 +27,13 @@ int main() {
     auto dataSet = Point::generateRandomDataSetOfSize(N_OUTLIERS);
 
     // models with noise
-    for(auto i = 0; i < N_MODELS; i++) {
-        auto inliers = Line::randomlyGenerated().generateRandomInliers(N_INLIERS);
-        dataSet.insert(inliers.begin(), inliers.end());
-    }
+//    for(auto i = 0; i < N_MODELS; i++) {
+//        auto inliers = Line::randomlyGenerated().generateRandomInliers(N_INLIERS);
+//        dataSet.insert(inliers.begin(), inliers.end());
+//    }
 
-//    auto inliers = Line::generateStarModel();
-//    dataSet.insert(inliers.begin(), inliers.end());
+    auto inliers = Line::generateStarModel();
+    dataSet.insert(inliers.begin(), inliers.end());
 
     // cluster generation
     auto modelClusters = Cluster::clusterizePairs(dataSet);
@@ -62,7 +62,7 @@ int main() {
     while(linkable) {
         linkIndex++;
         linkable = link(clusters, dataSet, pm, models);
-        std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
+//        std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
 
