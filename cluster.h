@@ -120,16 +120,6 @@ public:
     std::vector<double> computePF(const std::vector<Line> &models);
 
     /**
-     * Returns the intersection of the two given vectors.
-     *
-     * @param a first vector
-     * @param b second vector
-     * @return
-     */
-    static std::set<Line> makeInter(const std::set<Line> &a,
-                                       const std::set<Line> &b
-                                       );
-    /**
      * @return true if all points were validated.
      */
     bool isModel();
@@ -138,18 +128,6 @@ public:
 private:
 
     // private methods
-
-    /**
-     * Returns the union of the two given vectors.
-     *
-     * @param a first vector
-     * @param b second vector
-     * @return
-     */
-    static std::vector<Line> makeUnion(const std::vector<Line> &a,
-                                       const std::vector<Line> &b
-                                       );
-
 
 
     // attributes
@@ -160,29 +138,6 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-std::map<Point, int> generatePointIndexes();
-
-/** Generates preference matrix of data set */
-std::vector<std::vector<double>> computePM(
-        const std::vector<Line> &models,
-        const std::set<Point> dataSet
-        );
-
-/** Returns the transposate of the given pm. */
-std::vector<std::vector<bool>> transposatePM(const std::vector<std::vector<bool>> &pm);
-
-/**
- * Exctracts a map associating a point with a set of models from the given PM.
- * Requires a data set and a set of models.
- *
- * @param models
- * @param pm
- * @return
- */
-std::map<Point, std::set<Line>> extractPSfromPM(
-        const std::set<Point> &dataSet,
-        const std::vector<Line> &models,
-        const std::vector<std::vector<bool>> &pm);
 
 /** Returns the Jaccard distance (between 0 and 1) from 2 vectors a and b. */
 double jaccard(
@@ -208,7 +163,6 @@ double tanimoto(
 bool link(
         std::vector<Cluster> &clusters,
         std::set<Point> &dataSet,
-        const std::vector<std::vector<double>> &pm,
         const std::vector<Line> &models
         );
 

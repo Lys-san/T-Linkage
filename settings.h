@@ -1,7 +1,7 @@
 /**
  * Author        : Lysandre M. (lysandre.macke@enpc.fr)
  * Created       : 04-28-2023
- * Last modified : 05-23-2023
+ * Last modified : 05-24-2023
  *
  * Global parameters for J-Linkage algorithm. */
 
@@ -25,9 +25,9 @@
                     } // color pack for clusters display (7 colors)
 
 // adjust these parameters for testing
-#define N_MODELS      5   // nuber of models
-#define N_INLIERS     30 // inliers for 1 model
-#define N_OUTLIERS    0 // in general data set
+#define N_MODELS      10   // nuber of models
+#define N_INLIERS     50 // inliers for 1 model
+#define N_OUTLIERS    30 // in general data set
 
 
 

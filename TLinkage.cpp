@@ -27,13 +27,13 @@ int main() {
     auto dataSet = Point::generateRandomDataSetOfSize(N_OUTLIERS);
 
     // models with noise
-//    for(auto i = 0; i < N_MODELS; i++) {
-//        auto inliers = Line::randomlyGenerated().generateRandomInliers(N_INLIERS);
-//        dataSet.insert(inliers.begin(), inliers.end());
-//    }
+    for(auto i = 0; i < N_MODELS; i++) {
+        auto inliers = Line::randomlyGenerated().generateRandomInliers(N_INLIERS);
+        dataSet.insert(inliers.begin(), inliers.end());
+    }
 
-    auto inliers = Line::generateStarModel();
-    dataSet.insert(inliers.begin(), inliers.end());
+//    auto inliers = Line::generateStarModel();
+//    dataSet.insert(inliers.begin(), inliers.end());
 
     // cluster generation
     auto modelClusters = Cluster::clusterizePairs(dataSet);
@@ -49,9 +49,9 @@ int main() {
     // START ALGORITHM
     auto start = chrono::steady_clock::now();
     // compute PM once
-    auto pm = computePM(models, dataSet);
-    std::cout << "[DEBUG] Computed " << pm.size() << " preference sets" << std::endl;
-    std::cout << "[DEBUG] Each PS considers " << pm[0].size() << " models" << std::endl;
+//    auto pm = computePM(models, dataSet);
+//    std::cout << "[DEBUG] Computed " << pm.size() << " preference sets" << std::endl;
+//    std::cout << "[DEBUG] Each PS considers " << pm[0].size() << " models" << std::endl;
 
 
     std::cout << "[DEBUG] Linking clusters, please wait... " << std::endl;
@@ -62,15 +62,15 @@ int main() {
     int linkIndex = 0;
     while(linkable) {
         linkIndex++;
-        linkable = link(clusters, dataSet, pm, models);
-//        std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
+        linkable = link(clusters, dataSet, models);
+        std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
 
     // display models
-//    validateNBiggestClusters(N_MODELS, clusters);
+    validateNBiggestClusters(N_MODELS, clusters);
 //    validateBiggestClusters_2(clusters, dataSet.size());
-    validateBiggestClusters(clusters);
+//    validateBiggestClusters(clusters);
 
     auto resWindow = Imagine::openWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "results", WINDOW_WIDTH, 10);
     Imagine::setActiveWindow(resWindow);

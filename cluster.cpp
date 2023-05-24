@@ -175,6 +175,7 @@ std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
     assert(size() > 0);
 
     std::vector<double> pf;
+
     if(size() == 1) {
         return computePreferenceFunctionFor(_points[0], models);
     }
@@ -182,37 +183,18 @@ std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
     // loop on preference functions
     for(auto i = 0; i < models.size(); i++) {
         auto model = models.at(i);
-        auto min = model.PFValue(_points.at(0));
+        auto min = model.PFValue(_points.at(0)); // temporary min value
         // compare for each point to find min
         for(auto point : _points) {
-            //auto tmp = computePreferenceFunctionFor(point, models)[i];
             auto model = models.at(i);
             auto tmp = model.PFValue(point);
             if(tmp < min) {
                 min = tmp;
             }
         }
-        // the final value is the found minimum
         pf.emplace_back(min);
     }
-
     return pf;
-}
-
-std::set<Line> Cluster::makeInter(const std::set<Line> &a, const std::set<Line> &b) {
-    std::set<Line> inter;
-    for(auto line : a) {
-        if(b.find(line) != b.end()) {
-            inter.insert(line);
-        }
-    }
-    for(auto line : b) {
-        if(a.find(line) != a.end()) {
-            inter.insert(line);
-        }
-    }
-    return inter;
-
 }
 
 bool Cluster::isModel() {
@@ -231,57 +213,7 @@ bool Cluster::isModel() {
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-std::map<Point, std::set<Line>> extractPSfromPM(const std::set<Point> &dataSet, const std::vector<Line> &models, const std::vector<std::vector<bool>> &pm) {
-    std::map<Point, std::set<Line>> preferenceSets;
-
-    int pointIndex;
-    int modelIndex;
-
-    pointIndex = 0;
-    for(auto psLine : pm) { // loop on rows (points)
-        modelIndex = 0;
-        auto pointIterator = dataSet.begin();
-        std::advance(pointIterator, pointIndex);
-
-        // constructing each ps
-        std::set<Line> ps;
-        auto val = *pointIterator;
-        for(auto b : psLine) { // loop on columns (models)
-
-            if(b) {
-                auto tmp = models.at(modelIndex);
-
-                ps.insert(models.at(modelIndex));
-            }
-            modelIndex++;
-        }
-        pointIndex++;
-        preferenceSets.emplace(std::make_pair(*pointIterator, ps));
-    }
-    return preferenceSets;
-}
-
-std::vector<std::vector<double>> computePM(const std::vector<Line> &models, const std::set<Point> dataSet) {
-    std::vector<std::vector<double>> pm;
-
-    for(auto point:dataSet) {
-        pm.emplace_back(computePreferenceFunctionFor(point, models));
-    }
-    return pm;
-}
-
-std::vector<std::vector<bool>> transposatePM(const std::vector<std::vector<bool>> &pm) {
-    std::vector<std::vector<bool>> transposate(pm.begin()->size(), std::vector<bool>(pm.size(), false));
-
-    for(int i = 0; i < pm.size(); i++) {
-        for(int j = 0; j < pm.begin()->size(); j++)
-        transposate.at(j).at(i) = pm.at(i).at(j);
-    }
-    return transposate;
-}
-
 double tanimoto(std::vector<double> a, std::vector<double> b) {
-
     assert(a.size() == b.size());
 
     double a_squaredNorm = std::inner_product(a.begin(), a.end(), a.begin(), 0.0L);
@@ -289,16 +221,10 @@ double tanimoto(std::vector<double> a, std::vector<double> b) {
 
     double ab_innerProduct = std::inner_product(a.begin(), a.end(), b.begin(), 0.0L);
 
-
     return 1 - ab_innerProduct/(a_squaredNorm + b_squaredNorm - ab_innerProduct);
 }
 
-bool link(std::vector<Cluster> &clusters,
-          std::set<Point> &dataSet,
-          const std::vector<std::vector<double>> &pm,
-          const std::vector<Line> &models
-          ) {
-
+bool link(std::vector<Cluster> &clusters, std::set<Point> &dataSet, const std::vector<Line> &models) {
     int iFirst     = 0;     // index of first cluster to link
     int iSecond    = 0;     // index of second cluster to link
     double minDist = 1.;    // min. distance between clusters PS (default : 1.)
@@ -313,10 +239,9 @@ bool link(std::vector<Cluster> &clusters,
         // for each other buffer
         for(auto c2 : clusters) {
             auto pf2 = c2.computePF(models);
-            // compare indexes so we don't try to merge a cluster with itself
 
+            // compare indexes so we don't try to merge a cluster with itself
             double dist = i != j ? tanimoto(pf1, pf2) : 1.;
-//            std::cout << "dist = " << dist << std::endl;
 
             if(dist < minDist) {
                 minDist = dist;
@@ -329,18 +254,23 @@ bool link(std::vector<Cluster> &clusters,
         i++;
     }
 
+    // merge
     if(linkable) {
-        // merge clusters
+        // the second cluster should be the smallest for faster merging
+        if(clusters[iFirst].size() < clusters[iSecond].size()) {
+            auto tmp = iFirst;
+            iFirst = iSecond;
+            iSecond = tmp;
+        }
+
         Cluster &mergingCluster = clusters[iFirst];
 
-        // put second buffer's content into first
         for(auto point : clusters[iSecond].points()) {
             mergingCluster.addPoint(point);
         }
-        auto it = std::find(clusters.begin(), clusters.end(), clusters[iSecond]);
 
         // erase second buffer
-        clusters.erase(it);
+        clusters.erase(clusters.begin() + iSecond);
     }
     return linkable;
 }
@@ -373,7 +303,7 @@ void validateBiggestClusters(std::vector<Cluster> &clusters) {
     for(auto cluster : clusters) {
         sizes.emplace_back(cluster.size());
     }
-    // add dummy cluster to cater for outliers-ree case
+    // add dummy cluster to cater for outliers-free case
     sizes.emplace_back(1);
 
     std::vector<int> diff;
@@ -394,15 +324,12 @@ void validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) 
     int minSize = 0.10 * dataSetSize;
     std::cout << minSize << std::endl;
 
-
     for(Cluster &cluster : clusters) {
         if(cluster.size() > minSize) {
             cluster.validate();
         }
-
     }
 }
-
 
 std::vector<Line> extractModels(const std::vector<Cluster> &clusters) {
     std::vector<Line> models;
@@ -413,5 +340,3 @@ std::vector<Line> extractModels(const std::vector<Cluster> &clusters) {
     }
     return models;
 }
-
-
