@@ -9,6 +9,9 @@
 #include <iostream>
 #include <set>
 #include <chrono> // remove after testing
+#include <omp.h>
+
+
 
 #include "point.h"
 #include "model.h"
@@ -66,6 +69,9 @@ public:
 
     /** Adds point to cluster. */
     void addPoint(Point p);
+
+    /** Adds points contained in the given vector to cluster. */
+    void addPoints(std::vector<Point> points);
 
     /** Accepts all points. */
     void validate();

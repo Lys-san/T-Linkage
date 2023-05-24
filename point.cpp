@@ -12,7 +12,7 @@ Point::~Point() {}
 
 std::set<Point> Point::generateRandomDataSetOfSize(unsigned int n) {
     std::set<Point> dataSet;
-
+    #pragma omp parallel for
     for(int i = 0; i < n; i++) {
         Point p = Point::randomlyGenerated();
         dataSet.emplace(p);

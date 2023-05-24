@@ -27,6 +27,7 @@ int main() {
     auto dataSet = Point::generateRandomDataSetOfSize(N_OUTLIERS);
 
     // models with noise
+    #pragma omp parallel for
     for(auto i = 0; i < N_MODELS; i++) {
         auto inliers = Line::randomlyGenerated().generateRandomInliers(N_INLIERS);
         dataSet.insert(inliers.begin(), inliers.end());
@@ -40,22 +41,16 @@ int main() {
     // extract models from clusterized set
     auto models = extractModels(modelClusters);
     std::cout << "[DEBUG] Extracted " << models.size() << " models" << std::endl;
-    auto clusters = Cluster::clusterize(dataSet);
-//    auto clusters = modelClusters; // uncomment for ladt version of the algorithm
+    auto clusters = Cluster::clusterize(dataSet); // <- comment for last version of the algorithm
+//    auto clusters = modelClusters; // <- uncomment for last version of the algorithm
     std::cout << "[DEBUG] Starting with " << clusters.size() << " clusters. " << std::endl;
 
     Cluster::displayClusters(clusters);
 
     // START ALGORITHM
     auto start = chrono::steady_clock::now();
-    // compute PM once
-//    auto pm = computePM(models, dataSet);
-//    std::cout << "[DEBUG] Computed " << pm.size() << " preference sets" << std::endl;
-//    std::cout << "[DEBUG] Each PS considers " << pm[0].size() << " models" << std::endl;
-
 
     std::cout << "[DEBUG] Linking clusters, please wait... " << std::endl;
-
 
     // link until model is found
     auto linkable = true;
@@ -80,5 +75,6 @@ int main() {
     std::cout << "[DEBUG] Ending with " << clusters.size() << " clusters after " << linkIndex << " linkages." << std::endl;
     cout << "Time took : " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << std::endl;
     Imagine::endGraphics();
+
     return 0;
 }

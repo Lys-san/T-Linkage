@@ -95,6 +95,10 @@ void Cluster::addPoint(Point p) {
     _points.emplace_back(p);
 }
 
+void Cluster::addPoints(std::vector<Point> points) {
+    _points.insert(_points.end(), points.begin(), points.end());
+}
+
 void Cluster::validate() {
     for(Point &point : _points) {
         point.accept();
@@ -180,13 +184,11 @@ std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
         return computePreferenceFunctionFor(_points[0], models);
     }
 
-    // loop on preference functions
-    for(auto i = 0; i < models.size(); i++) {
-        auto model = models.at(i);
+    // find min PF value for each model
+    for(auto model : models) {
         auto min = model.PFValue(_points.at(0)); // temporary min value
         // compare for each point to find min
         for(auto point : _points) {
-            auto model = models.at(i);
             auto tmp = model.PFValue(point);
             if(tmp < min) {
                 min = tmp;
@@ -207,7 +209,6 @@ bool Cluster::isModel() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +240,6 @@ bool link(std::vector<Cluster> &clusters, std::set<Point> &dataSet, const std::v
         // for each other buffer
         for(auto c2 : clusters) {
             auto pf2 = c2.computePF(models);
-
             // compare indexes so we don't try to merge a cluster with itself
             double dist = i != j ? tanimoto(pf1, pf2) : 1.;
 
@@ -265,9 +265,7 @@ bool link(std::vector<Cluster> &clusters, std::set<Point> &dataSet, const std::v
 
         Cluster &mergingCluster = clusters[iFirst];
 
-        for(auto point : clusters[iSecond].points()) {
-            mergingCluster.addPoint(point);
-        }
+        mergingCluster.addPoints(clusters[iSecond].points());
 
         // erase second buffer
         clusters.erase(clusters.begin() + iSecond);

@@ -67,7 +67,6 @@ double Line::squaredLength() {
 
 std::set<Point> Line::generateRandomInliers(unsigned int n) {
     std::set<Point> inliers;
-
     for(int i = 0; i < n; i++) {
         Point pp = randomPoint();
         pp.addNoise();
@@ -141,6 +140,7 @@ Line Line::leastSquares(const std::vector<Point> &points) {
     double ySum = 0.;
     double xySum = 0.;
     double xSquaredSum = 0.;
+
 
     for(auto point : points) {
         xSum += point.x();

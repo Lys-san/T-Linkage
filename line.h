@@ -11,6 +11,7 @@
 #include "settings.h"
 #include <float.h>
 #include <Imagine/Graphics.h>
+#include <omp.h>
 
 
 #define INFTY DBL_MAX // approximation of infinity

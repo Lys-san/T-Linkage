@@ -4,6 +4,9 @@ list(APPEND CMAKE_FRAMEWORK_PATH /Library/Frameworks) #Mac, why not auto?
 
 find_package(Imagine REQUIRED)
 
+find_package(OpenMP)
+
+
 
 add_executable(
     tlk TLinkage.cpp
@@ -20,4 +23,9 @@ add_executable(
     model.cpp
     util.h
     util.cpp)
+
 ImagineUseModules(tlk Graphics)
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(tlk OpenMP::OpenMP_CXX)
+endif()

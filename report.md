@@ -46,3 +46,9 @@ Whereas the J-Linkage has the following times :
 |32865 ms|
 |34400 ms|
 |31620 ms|
+
+--------------------------------
+
+24-05-2023
+
+I started optimizing the code (faster vector operations, etc...), and went from 17s to 13s for the outlier-free star model (30 inliers per line). 
