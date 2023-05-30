@@ -6,23 +6,17 @@ find_package(Imagine REQUIRED)
 
 find_package(OpenMP)
 
+include_directories(
+	${PROJECT_SOURCE_DIR}/include
+	${PROJECT_SOURCE_DIR}/src
+)
 
+file(GLOB all_SRCS
+        "${PROJECT_SOURCE_DIR}/include/*.h"
+        "${PROJECT_SOURCE_DIR}/src/*.cpp"
+)
 
-add_executable(
-    tlk TLinkage.cpp
-    point.h
-    point.cpp
-    line.h
-    line.cpp
-    window.h
-    window.cpp
-    cluster.h
-    cluster.cpp
-    settings.h
-    model.h
-    model.cpp
-    util.h
-    util.cpp)
+add_executable(tlk ${all_SRCS})
 
 ImagineUseModules(tlk Graphics)
 
