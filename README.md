@@ -41,9 +41,9 @@ This program uses randomly generated datasets for line fitting problems. Dependi
 
 The main files of this programm are `TLinkage.cpp` and `settings.h`. 
 
-`TLinkage.cpp` contains the main function with JLinkage algorithm.
+`TLinkage.cpp` contains the main function with TLinkage algorithm.
 
-`settings.h` defines the global parameters to use for testing (threshold, number of inliers/outliers etc...)
+`settings.h` defines the global parameters to use for testing (threshold, number of inliers/outliers etc...) that you may want to modify.
 
 Other files define classes and functions used in `TLinkage.cpp`.
 
@@ -54,5 +54,5 @@ Other files define classes and functions used in `TLinkage.cpp`.
 For any information, please contact me at lysandre.macke@enpc.fr
 
 ## References
-[1] Roberto Toldo and Andrea Fusiello. 
-Robust multiple structures estimation with j-linkage. ECCV 2008.
+[1] Luca Magri and Andrea Fusiello. 
+T-linkage: A continuous relaxation of j-linkage for multi-model fitting. CVPR 2014.
