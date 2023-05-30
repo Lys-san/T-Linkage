@@ -7,7 +7,6 @@
 #define LINE_H
 
 #include "point.h"
-#include "model.h"
 #include "settings.h"
 #include <float.h>
 #include <Imagine/Graphics.h>

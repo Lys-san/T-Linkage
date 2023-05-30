@@ -1,8 +1,8 @@
-# J-Linkage
+# T-Linkage
 
 ## Overview
 
-Implementation of the J-Linkage algorithm for multiple line fitting problems, based on R. Toldo & A. Fusiello work [[1]](#references).
+Implementation of the T-Linkage algorithm for multiple line fitting problems, based on L. Magri & A. Fusiello work [[1]](#references).
 
 ![preview](preview/tlk-10-models.jpg)
 

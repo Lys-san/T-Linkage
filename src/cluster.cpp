@@ -283,11 +283,18 @@ void validateNBiggestClusters(unsigned int n, std::vector<Cluster> &clusters) {
     }
 }
 
-void validateBiggestClusters(std::vector<Cluster> &clusters) {    
+void validateBiggestClusters(std::vector<Cluster> &clusters, int dataSetSize) {
     assert(clusters.size() > 0);
 
+
+    auto tmp = clusters;
+
+    // sort by size
     std::sort(clusters.begin(), clusters.end());
     std::reverse(clusters.begin(), clusters.end());
+
+    auto start = validateBiggestClusters_2(clusters, dataSetSize);
+
 
     // for debug, remove after (or maybe not...?)
     std::cout << "[DEBUG] Final cluster sizes : " << std::endl;
@@ -298,9 +305,10 @@ void validateBiggestClusters(std::vector<Cluster> &clusters) {
 
     std::vector<int> sizes;
 
-    for(auto cluster : clusters) {
-        sizes.emplace_back(cluster.size());
+    for(int i = start; i < clusters.size(); i++) {
+        sizes.emplace_back(clusters[i].size());
     }
+
     // add dummy cluster to cater for outliers-free case
     sizes.emplace_back(1);
 
@@ -308,25 +316,37 @@ void validateBiggestClusters(std::vector<Cluster> &clusters) {
     std::adjacent_difference(sizes.begin(), sizes.end(), sizes.begin());
     std::transform(sizes.begin(), sizes.end(), sizes.begin(), [](int s) {return s > 0 ? s : -s;});
 
-    auto it = std::max_element(sizes.begin() + 1, sizes.end());
-    auto index = std::distance(sizes.begin(), it);
 
-    for(int i = 0; i < index; i++) {
-        clusters[i].validate();
+    auto it = std::max_element(sizes.begin() + 1, sizes.end());
+    if(*it > 2) {
+        auto index = std::distance(sizes.begin(), it);
+
+        for(int i = start; i < start + index; i++) {
+            clusters[i].validate();
+        }
     }
+
 }
 
-void validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) {
+int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) {
     assert(clusters.size() > 0);
 
     int minSize = 0.10 * dataSetSize;
     std::cout << minSize << std::endl;
 
+    int index = 0;
+
     for(Cluster &cluster : clusters) {
         if(cluster.size() > minSize) {
             cluster.validate();
+            std::cout << "validate before" << std::endl;
         }
+        else {
+            break;
+        }
+        index++;
     }
+    return index;
 }
 
 std::vector<Line> extractModels(const std::vector<Cluster> &clusters) {

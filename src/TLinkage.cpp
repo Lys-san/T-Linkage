@@ -63,9 +63,9 @@ int main() {
     auto end = chrono::steady_clock::now();
 
     // display models
-    validateNBiggestClusters(N_MODELS, clusters);
+//    validateNBiggestClusters(N_MODELS, clusters);
 //    validateBiggestClusters_2(clusters, dataSet.size());
-//    validateBiggestClusters(clusters);
+    validateBiggestClusters(clusters, dataSet.size());
 
     auto resWindow = Imagine::openWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "results", WINDOW_WIDTH, 10);
     Imagine::setActiveWindow(resWindow);

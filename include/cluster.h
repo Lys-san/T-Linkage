@@ -14,9 +14,7 @@
 
 
 #include "point.h"
-#include "model.h"
 #include "line.h"
-#include "util.h"
 
 
 /** Represents a cluster of points, which can eventually be view as a model hypothesis.
@@ -176,12 +174,15 @@ bool link(
 void validateNBiggestClusters(unsigned int n, std::vector<Cluster> &clusters);
 
 /** Validates the biggest clusters contained in the given vector.
-  * A cluster is valid if its size is big enough compared to other clusters size. */
-void validateBiggestClusters(std::vector<Cluster> &clusters);
+  * The cluster rejection method is directly inspired from L. Magri and A. Fusillo
+  * paper.*/
+void validateBiggestClusters(std::vector<Cluster> &clusters, int dataSetSize);
 
 /** Validaes the biggest clusters contained in the given vector according to the dataSet size.
- *  A cluster is valid if its size is > minSize. */
-void validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize);
+ *  A cluster is valid if its size is > minSize.
+ *  Assume that the vector is sorted by descending order.
+ *  Return the index of the last validated cluster. */
+int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize);
 
 
 /**
