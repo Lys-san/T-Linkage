@@ -38,8 +38,8 @@ Line::Line(double a, double b):
 
 
 Line Line::randomlyGenerated() {
-    Point p = Point::randomlyGeneratedOnYvalue(0.);
-    Point q = Point::randomlyGeneratedOnYvalue(1.);
+    Point p = rand() % 2 == 0 ? Point::randomlyGeneratedOnYvalue(0.) : Point::randomlyGeneratedOnXvalue(0.);
+    Point q = rand() % 2 == 0 ? Point::randomlyGeneratedOnYvalue(1.) : Point::randomlyGeneratedOnXvalue(1.);
     return Line(p, q);
 }
 

@@ -3,11 +3,10 @@
  * Created       : 04-28-2023
  * Last modified : 05-31-2023
  *
- * Global parameters for J-Linkage algorithm. */
+ * Global parameters for T-Linkage algorithm. */
 
 #ifndef SETTINGS_H
 #define SETTINGS_H
-
 
 #define TAU           0.005      // works like a threshold for PF computing (works well with TAU=0.005)
 #define Z             1          // normalization constant (in fact, we can keep it to 1)
@@ -25,14 +24,13 @@
                     Imagine::YELLOW   \
                     } // color pack for clusters display (7 colors)
 
-# define N_COLORS 7
+#define N_COLORS 7
 
 ////////////////////////////////////////////////////////////////////
 
 // adjust these parameters for testing
-#define N_MODELS      2   // number of models
+#define N_MODELS      5   // number of models
 #define N_INLIERS     30 // inliers for 1 model
-#define N_OUTLIERS    10 // outliers in general data set
-
+#define N_OUTLIERS    0 // outliers in general data set
 
 #endif // SETTINGS_H

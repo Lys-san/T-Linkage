@@ -1,12 +1,12 @@
 /** 
  * Author        : Lysandre M. (lysandre.macke@enpc.fr)
  * Created       : 04-26-2023
- * Last modified : 05-17-2023
+ * Last modified : 05-31-2023
  * 
  * Implementation of the T-linkage algorithm for multi-model estimation.
  * Using the Imagine++ library.
  * 
- * Inspired by L. Magri and A. Fusiello work 'T-Linkage : a Contiuous
+ * Inspired by L. Magri and A. Fusiello work 'T-Linkage : a Continuous
  * Relaxation of J-Linkage for Multi-Model Fitting'. */
 
 #include <iostream>
@@ -18,7 +18,6 @@ using namespace std;
 
 
 int main() {
-    std::cout << "Program starts." << std::endl;
     Imagine::openWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     // seed initialization
@@ -27,13 +26,11 @@ int main() {
     // random point generation
     auto dataSet = Point::generateRandomDataSetOfSize(N_OUTLIERS);
 
-    // models with noise
+    // generate models with noise
     for(auto i = 0; i < N_MODELS; i++) {
         auto inliers = Line::randomlyGenerated().generateRandomInliers(N_INLIERS);
         dataSet.insert(inliers.begin(), inliers.end());
     }
-    std::cout << "Generated dataset." << std::endl;
-
 
 //    auto inliers = Line::generateStarModel();
 //    dataSet.insert(inliers.begin(), inliers.end());
