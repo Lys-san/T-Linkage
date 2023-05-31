@@ -142,7 +142,6 @@ void Cluster::displayValidated(const std::vector<Cluster> &clusters) {
             std::cout << "[DEBUG] VALID MODEL of size " << cluster.size() << std::endl;
             for(auto point : cluster.points()) {
                     point.display();
-
             }
         }
     }
@@ -318,7 +317,7 @@ void validateBiggestClusters(std::vector<Cluster> &clusters, int dataSetSize) {
 
 
     auto it = std::max_element(sizes.begin() + 1, sizes.end());
-    if(*it > 2) {
+    if(*it > 4) {
         auto index = std::distance(sizes.begin(), it);
 
         for(int i = start; i < start + index; i++) {
@@ -331,7 +330,7 @@ void validateBiggestClusters(std::vector<Cluster> &clusters, int dataSetSize) {
 int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) {
     assert(clusters.size() > 0);
 
-    int minSize = 0.10 * dataSetSize;
+    int minSize = 0.1 * dataSetSize;
     std::cout << minSize << std::endl;
 
     int index = 0;
@@ -339,7 +338,6 @@ int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) {
     for(Cluster &cluster : clusters) {
         if(cluster.size() > minSize) {
             cluster.validate();
-            std::cout << "validate before" << std::endl;
         }
         else {
             break;

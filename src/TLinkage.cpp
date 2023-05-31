@@ -18,6 +18,7 @@ using namespace std;
 
 
 int main() {
+    std::cout << "Program starts." << std::endl;
     Imagine::openWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     // seed initialization
@@ -27,11 +28,12 @@ int main() {
     auto dataSet = Point::generateRandomDataSetOfSize(N_OUTLIERS);
 
     // models with noise
-    #pragma omp parallel for
     for(auto i = 0; i < N_MODELS; i++) {
         auto inliers = Line::randomlyGenerated().generateRandomInliers(N_INLIERS);
         dataSet.insert(inliers.begin(), inliers.end());
     }
+    std::cout << "Generated dataset." << std::endl;
+
 
 //    auto inliers = Line::generateStarModel();
 //    dataSet.insert(inliers.begin(), inliers.end());
@@ -63,8 +65,6 @@ int main() {
     auto end = chrono::steady_clock::now();
 
     // display models
-//    validateNBiggestClusters(N_MODELS, clusters);
-//    validateBiggestClusters_2(clusters, dataSet.size());
     validateBiggestClusters(clusters, dataSet.size());
 
     auto resWindow = Imagine::openWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "results", WINDOW_WIDTH, 10);
