@@ -1,7 +1,7 @@
 /**
  * Author        : Lysandre M. (lysandre.macke@enpc.fr)
  * Created       : 04-27-2023
- * Last modified : 05-17-2023 */
+ * Last modified : 06-15-2023 */
 
 #ifndef CLUSTER_H
 #define CLUSTER_H
@@ -13,8 +13,8 @@
 
 
 
-#include "point.h"
 #include "line.h"
+#include "pointpool.h"
 
 
 /** Represents a cluster of points, which can eventually be view as a model hypothesis.
@@ -26,19 +26,19 @@ public:
 
     Cluster(const Cluster& other);
 
-    Cluster(Point p);
+    Cluster(std::shared_ptr<Point>p);
 
-    Cluster(const std::set<Point> &points);
+    Cluster(const std::vector<std::shared_ptr<Point>> &points);
 
     /** Destructor */
     ~Cluster();
 
     /** Factory method that generates N/2 clusters from the given data set. */
-    static std::vector<Cluster> clusterizePairs(const std::set<Point> &points);
+    static std::vector<Cluster> clusterizePairs(const PointPool &points);
 
     /** Factory method that generates N singleton clusters from a data set
      *  of size N */
-    static std::vector<Cluster> clusterize(const std::set<Point> &points);
+    static std::vector<Cluster> clusterize(const PointPool &points);
 
 
     /** Stream operator << redefinition. */
@@ -63,13 +63,13 @@ public:
     bool operator==(const Cluster &other) const;
 
     /** Accessor for private _points field. */
-    std::vector<Point> points() const;
+    std::vector<std::shared_ptr<Point>> points() const;
 
     /** Adds point to cluster. */
-    void addPoint(Point p);
+    void addPoint(std::shared_ptr<Point>p);
 
     /** Adds points contained in the given vector to cluster. */
-    void addPoints(std::vector<Point> points);
+    void addPoints(std::vector<std::shared_ptr<Point>> points);
 
     /** Accepts all points. */
     void validate();
@@ -86,7 +86,9 @@ public:
      *
      * @param clusters the clusters to be displayed.
      */
-    static void displayClusters(const std::vector<Cluster> &clusters);
+    static void displayClusters(const std::vector<Cluster> &clusters,
+                                int windowWidth,
+                                int windowHeight);
 
     /**
      * Displays the given vectors, automatically assigning each one a color.
@@ -100,7 +102,9 @@ public:
      *
      * @param clusters the clusters to be displayed.
      */
-    static void displayValidated(const std::vector<Cluster> &clusters);
+    static void displayValidated(const std::vector<Cluster> &clusters,
+                                 int windowWidth,
+                                 int windowHeight);
 
     /**
      * @brief displayModels
@@ -114,14 +118,15 @@ public:
      */
     Line extractLineModel();
 
-    Point extractPointModel();
-
     /**
      *  Computes and returns the preference function of the cluster,
      *  defined as the vector of PF minimums for each point contained
      *  in the cluster.
      */
-    std::vector<double> computePF(const std::vector<Line> &models);
+    std::vector<double> computePF(
+            const std::vector<Line> &models,
+            PointPool &dataSet
+            );
 
     /**
      * @return true if all points were validated.
@@ -136,7 +141,7 @@ private:
 
     // attributes
 
-    std::vector<Point> _points;                // vector of points composing the cluster
+    std::vector<std::shared_ptr<Point>> _points;                // vector of points composing the cluster
 
 };
 
@@ -166,7 +171,7 @@ double tanimoto(
 /** Performs linking action and updates given parameters. */
 bool link(
         std::vector<Cluster> &clusters,
-        std::set<Point> &dataSet,
+        PointPool &dataSet,
         const std::vector<Line> &models
         );
 

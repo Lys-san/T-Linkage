@@ -3,8 +3,13 @@ project(TLinkage)
 list(APPEND CMAKE_FRAMEWORK_PATH /Library/Frameworks) #Mac, why not auto?
 
 find_package(Imagine REQUIRED)
-
+find_package(OpenCV REQUIRED)
 find_package(OpenMP)
+
+if(${OpenCV_VERSION} VERSION_LESS 2.0.0)
+    message(FATAL_ERROR “OpenCV version is not compatible : ${OpenCV_VERSION}”)
+endif()
+
 
 include_directories(
 	${PROJECT_SOURCE_DIR}/include
@@ -19,6 +24,7 @@ file(GLOB all_SRCS
 add_executable(tlk ${all_SRCS})
 
 ImagineUseModules(tlk Graphics)
+target_link_libraries(tlk ${OpenCV_LIBS})
 
 if(OpenMP_CXX_FOUND)
     target_link_libraries(tlk OpenMP::OpenMP_CXX)

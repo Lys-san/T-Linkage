@@ -1,7 +1,7 @@
 /**
  * Author        : Lysandre M. (lysandre.macke@enpc.fr)
  * Created       : 04-27-2023
- * Last modified : 05-31-2023 */
+ * Last modified : 06-19-2023 */
 
 #ifndef POINT_H
 #define POINT_H
@@ -10,8 +10,11 @@
 #include <cassert>
 #include <random>
 #include <Imagine/Graphics.h>
+#include <Imagine/Images.h>
 #include <map>
 #include <set>
+#include <memory>
+#include "opencv2/core/core.hpp"
 
 #include "window.h"
 #include "settings.h"
@@ -32,19 +35,20 @@ public:
     /** Default constructor */
     Point();
 
+    Point(const Point& p)
+        : _x { p._x }
+        , _y { p._y }
+    {}
+
     /** Constructor */
     Point(double x, double y);
 
     /** Destructor */
     ~Point();
 
-    /**
-     * Factory method to generate n random points, returned as an immutable set.
-     *
-     * @param n the size of the set to be generated
-     * @return a set of n random points
-     */
-    static std::set<Point> generateRandomDataSetOfSize(unsigned int n);
+    /** (DEPRECATED) */
+    static void freeAll(std::vector<Point *> &dataSet);
+
 
     /** Stream operator << redefinition. */
     friend std::ostream &operator<<(std::ostream &out, Point &point);
@@ -68,11 +72,21 @@ public:
      */
     bool operator!=(const Point &other) const;
 
+    /**
+     * Returns the point as a (homogeneous) 3 dimension vector object.
+     *
+     * @return a vector representation of the point
+     */
+    cv::Vec3d asVec() const;
+
     /** Accessor for private _x field. */
     double x() const;
 
     /** Accessor for private _y field. */
     double y() const;
+
+    /** Accessor for private _z field. */
+    double z() const;
 
     bool isInlier() const;
 
@@ -101,17 +115,17 @@ public:
     static double randomCoordinate();
 
     /** Screen display. */
-    void display();
+    void display(int windowWidth = WINDOW_WIDTH, int windowHeight = WINDOW_HEIGHT);
 
     /**
      * Displays given set of points on the current window.
      *
      * @param points the set of points to display
      */
-    static void displayPoints(const std::set<Point> &points);
+    static void displayPoints(const std::vector<Point> &points);
 
     /** Screen display with a given color */
-    void display(Imagine::Color color);
+    void display(Imagine::Color color, int windowWidth = WINDOW_WIDTH, int windowHeight = WINDOW_HEIGHT);
 
     /** Changes value of boolean _isInlier to true. */
     void accept();
@@ -127,16 +141,43 @@ public:
     /** Disturb the coordinate of the point. */
     void addNoise();
 
+    /** Disturb the coordinate of the point. */
+    void addNoise(double maxNoise);
+
     /** Computes and return a map associating each point from the given set to its
      *  probability of being drawn after the current point.
+     *  The futher from the curren point a point is, the higher its probability will
+     *  be.
      *
      * @param points the set of points to compute probability for
      * @return a map associating each point from the given set to its probability of
      * being draw after th current point.
      */
-    std::discrete_distribution<> computeProbabilitiesFor(const std::set<Point> &points);
+    std::discrete_distribution<> computeProbabilitiesFor(const std::vector<Point *> &points);
 
-    std::vector<bool> computeBooleanConsensusSet(const std::set<Point> &dateSet);
+    std::vector<bool> computeBooleanConsensusSet(const std::vector<Point> &dateSet);
+
+    /**
+     * Updates the _bestMatchValue attribute.
+     */
+    void storeBestMatchValue(double value);
+
+    /**
+     * Returns the stored best match value and resets it to 0.
+     */
+    double retrieveBestMatchValue();
+
+    /**
+     * Returns weither the point has a stored bestMatchValue or not.
+     */
+    bool hasBestMatchValue();
+
+    /**
+     * Changes the coordinate of the point to its reflexion with respect to the
+     * center vertical symmetry axis.
+     */
+    Point reflection();
+
 
 
 private:
@@ -145,19 +186,28 @@ private:
     /** Returns a double value in [-MAX_NOISE, MAX_NOISE]. */
     double generateNoiseValue();
 
+    /** Returns a double value in [-maxNoise, maxNoise]. */
+    double generateNoiseValue(double maxNoise);
+
 
     // private attributes
 
     double _x;
     double _y;
+    double _z = 1.; // homogeneous value
 
     // does the point matched with a searched model ? (default : false)
     bool _isInlier = false;
+
+    // temporary space to store bext match value for a point
+    double _bestMatchValue = 0.;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 /** Squared euclidian distance between 2 points. */
 double squaredDistance(Point p1, Point p2);
+
+bool contains(std::vector<std::shared_ptr<Point>> points, Point p);
 
 #endif // POINT_H

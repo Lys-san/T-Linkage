@@ -11,7 +11,7 @@
 #define TAU           0.005      // works like a threshold for PF computing (works well with TAU=0.005)
 #define Z             1          // normalization constant (in fact, we can keep it to 1)
 #define SQUARED_SIGMA 0.001      // for random sampling
-#define MAX_NOISE     0.001      // max value added to an inlier to ennoise the model (default : 0.005)
+#define N_MODELS_TO_DRAW 50
 
 ////////////////////////////////////////////////////////////////////
 
@@ -27,10 +27,21 @@
 #define N_COLORS 7
 
 ////////////////////////////////////////////////////////////////////
+// adjust these parameters for testing with random data set
+#define N_MODELS      3    // number of models
+#define N_INLIERS     30   // inliers for 1 model
+#define N_OUTLIERS    50   // outliers in general data set
+#define MAX_NOISE     0.00 // max value added to an inlier to ennoise
+                           //              the model (default : 0.005)
 
-// adjust these parameters for testing
-#define N_MODELS      5   // number of models
-#define N_INLIERS     30 // inliers for 1 model
-#define N_OUTLIERS    0 // outliers in general data set
+
+///////////////////////////////////////////////////////////////////////////
+// adjust these parameters for testing with an input image
+
+#define DEFAULT_IMAGE "uni.jpg" // image to load from the input folder
+#define FILTER_VALUE  100        // must be > 1 (the more the value gets the less points will be kept)
+#define ROUND_VALUE   50.          // must be > 0.
+                                   // The bigger this value gets, the more accurate the data set will be generated.
+                                   // The more close to 0 the value gets, the more pixelated the dataset will be generated.
 
 #endif // SETTINGS_H

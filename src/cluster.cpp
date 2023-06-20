@@ -9,13 +9,11 @@ Cluster::Cluster(const Cluster& other) {
     }
 }
 
-Cluster::Cluster(Point p) {
+Cluster::Cluster(std::shared_ptr<Point>p) {
     _points.emplace_back(p);
 }
 
-
-
-Cluster::Cluster(const std::set<Point> &points) {
+Cluster::Cluster(const std::vector<std::shared_ptr<Point>> &points) {
     for(auto point : points) {
         _points.emplace_back(point);
     }
@@ -24,55 +22,67 @@ Cluster::Cluster(const std::set<Point> &points) {
 Cluster::~Cluster() {}
 
 
-std::vector<Cluster> Cluster::clusterizePairs(const std::set<Point> &points) {
+std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
     auto dataSet = points;         // copy data set points
     std::vector<Cluster> clusters; // our set of clusters
 
+    int index = 0;
+
     // building clusters until no more points in data set
     while(dataSet.size() > 0) {
-        std::set<Point> clusterPoints;         // will store points from our cluster
+        std::vector<std::shared_ptr<Point>> clusterPoints;         // will store points from our cluster
+
+        auto test = clusterPoints.begin();
 
         // retrieve a first random point from data set
         auto i = std::rand() % dataSet.size();
-        auto it = dataSet.begin();
-        std::advance(it, i);
-        Point p = *it;
-        clusterPoints.emplace(p);
-        dataSet.erase(it);
+//        auto it = dataSet.begin();
+//        std::advance(it, i);
+//        clusterPoints.emplace_back(dataSet.at(i));
+//        dataSet.erase(it);
+        clusterPoints.emplace_back(dataSet.retrievePointAt(i));
 
 
         for(int i = 0; i < std::min(1UL, dataSet.size()); i++) { // change 1UL value if want to make bigger clusters
             // computing probability according to last selected point
-            std::discrete_distribution<> d = p.computeProbabilitiesFor(dataSet);
-            std::random_device rd;
-            std::mt19937 gen(rd());
+//            std::discrete_distribution<> d = p->computeProbabilitiesFor(dataSet);
+//            std::random_device rd;
+//            std::mt19937 gen(rd());
 
-            int point_index = d(gen);
+//            int point_index = d(gen);
 
             // what if second point is chosen uniformly ?
-//            int point_index = std::rand() % dataSet.size();
+            int point_index = std::rand() % dataSet.size();
 
-            it = dataSet.begin();
-            std::advance(it, point_index);
-            p = *it;
+//            it = dataSet.begin();
+//            std::advance(it, point_index);
+//            auto p = *it;
 
-            clusterPoints.emplace(p);
-            dataSet.erase(it);
+//            clusterPoints.emplace_back(p);
+//            dataSet.erase(it);
+
+            clusterPoints.emplace_back(dataSet.retrievePointAt(point_index));
         }
 
         auto cluster = Cluster(clusterPoints);
         clusters.emplace_back(cluster);
+        if(++index >= N_MODELS_TO_DRAW) {
+            break;
+        }
     }
     std::cout<< "[DEBUG] End of random sampling. Generated "
              << clusters.size()  << " models for total data of size  : " << points.size() << std::endl;
     return clusters;
 }
 
-std::vector<Cluster> Cluster::clusterize(const std::set<Point> &points) {
+std::vector<Cluster> Cluster::clusterize(const PointPool &points) {
     std::vector<Cluster> clusters;
 
-    for(auto point : points) {
-        clusters.emplace_back(Cluster(point));
+//    for(auto point : points) {
+//        clusters.emplace_back(Cluster(point));
+//    }
+    for(auto i = 0; i < points.size(); i++) {
+        clusters.emplace_back(Cluster(points[i]));
     }
 
     return clusters;
@@ -86,28 +96,28 @@ std::ostream &operator<<(std::ostream &out, Cluster &cluster) {
     return out;
 }
 
-std::vector<Point> Cluster::points() const {
+std::vector<std::shared_ptr<Point>> Cluster::points() const {
     return _points;
 }
 
 
-void Cluster::addPoint(Point p) {
+void Cluster::addPoint(std::shared_ptr<Point>p) {
     _points.emplace_back(p);
 }
 
-void Cluster::addPoints(std::vector<Point> points) {
+void Cluster::addPoints(std::vector<std::shared_ptr<Point>> points) {
     _points.insert(_points.end(), points.begin(), points.end());
 }
 
 void Cluster::validate() {
-    for(Point &point : _points) {
-        point.accept();
+    for(std::shared_ptr<Point>point : _points) {
+        point->accept();
     }
 }
 
 void Cluster::invalidate() {
-    for(auto point : _points) {
-        point.reject();
+    for(std::shared_ptr<Point>point : _points) {
+        point->reject();
     }
 }
 
@@ -115,10 +125,10 @@ int Cluster::size() {
     return _points.size();
 }
 
-void Cluster::displayClusters(const std::vector<Cluster> &clusters) {
+void Cluster::displayClusters(const std::vector<Cluster> &clusters, int windowWidth, int windowHeight) {
     for(auto cluster:clusters) {
         for(auto point : cluster.points()) {
-            point.display();
+            point->display(windowWidth, windowHeight);
         }
     }
 }
@@ -130,41 +140,32 @@ void Cluster::displayClustersWithColors(const std::vector<Cluster> &clusters) {
     for(auto cluster:clusters) {
         auto col = cols[i % N_COLORS];
         for(auto point : cluster.points()) {
-            point.display(col);
+            point->display(col);
         }
         i++;
     }
 }
 
-void Cluster::displayValidated(const std::vector<Cluster> &clusters) {
+void Cluster::displayValidated(const std::vector<Cluster> &clusters, int windowWidth, int windowHeight) {
     for(auto cluster : clusters) {
         if(cluster.isModel()) {
             std::cout << "[DEBUG] VALID MODEL of size " << cluster.size() << std::endl;
+
             for(auto point : cluster.points()) {
-                    point.display();
+                    point->display(windowWidth, windowHeight);
             }
         }
     }
 }
 
-void Cluster::displayModels(const std::vector<Cluster> &clusters) {
-    for(auto cluster : clusters) {
-        if(cluster.isModel()) {
-            auto model = Line::leastSquares(cluster._points);
-            model.display();
-        }
-    }
-}
 
 Line Cluster::extractLineModel() {
     assert(size() == 2);
 
-    return Line(_points[0], _points[1]);
+    return Line(*_points[0], *_points[1]);
 }
 
-Point Cluster::extractPointModel() {
-    return *points().begin();
-}
+
 
 bool Cluster::operator<(const Cluster &other) const {
     return this->_points.size() < other._points.size();
@@ -174,23 +175,26 @@ bool Cluster::operator==(const Cluster &other) const {
     return this->points() == other.points();
 }
 
-std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
+std::vector<double> Cluster::computePF(const std::vector<Line> &models, PointPool &dataSet) {
     assert(size() > 0);
 
     std::vector<double> pf;
 
-    if(size() == 1) {
-        return computePreferenceFunctionFor(_points[0], models);
-    }
+//    if(size() == 1) {
+//        return computePreferenceFunctionFor(_points[0], models);
+//    }
 
     // find min PF value for each model
     for(auto model : models) {
-        auto min = model.PFValue(_points.at(0)); // temporary min value
+        auto min = model.PFValue(*_points.at(0)); // temporary min value
         // compare for each point to find min
         for(auto point : _points) {
-            auto tmp = model.PFValue(point);
+            auto tmp = model.PFValue(*point);
             if(tmp < min) {
                 min = tmp;
+                if(tmp == 0.) {
+                    break; // no need to do more computation !
+                }
             }
         }
         pf.emplace_back(min);
@@ -200,7 +204,7 @@ std::vector<double> Cluster::computePF(const std::vector<Line> &models) {
 
 bool Cluster::isModel() {
     for(auto point : _points) {
-        if(!point.isInlier()) {
+        if(!point->isInlier()) {
             return false;
         }
     }
@@ -224,7 +228,7 @@ double tanimoto(std::vector<double> a, std::vector<double> b) {
     return 1 - ab_innerProduct/(a_squaredNorm + b_squaredNorm - ab_innerProduct);
 }
 
-bool link(std::vector<Cluster> &clusters, std::set<Point> &dataSet, const std::vector<Line> &models) {
+bool link(std::vector<Cluster> &clusters, PointPool &dataSet, const std::vector<Line> &models) {
     int iFirst     = 0;     // index of first cluster to link
     int iSecond    = 0;     // index of second cluster to link
     double minDist = 1.;    // min. distance between clusters PS (default : 1.)
@@ -232,13 +236,14 @@ bool link(std::vector<Cluster> &clusters, std::set<Point> &dataSet, const std::v
     int i          = 0;     // first loop index
     int j          = 0;     // second loop index
 
+
     // find closest clusters according to jaccard distance
     for(auto c1 : clusters) {
         j = 0;
-        auto pf1 = c1.computePF(models);
+        auto pf1 = c1.computePF(models, dataSet);
         // for each other buffer
         for(auto c2 : clusters) {
-            auto pf2 = c2.computePF(models);
+            auto pf2 = c2.computePF(models, dataSet);
             // compare indexes so we don't try to merge a cluster with itself
             double dist = i != j ? tanimoto(pf1, pf2) : 1.;
 
@@ -292,6 +297,7 @@ void validateBiggestClusters(std::vector<Cluster> &clusters, int dataSetSize) {
     std::sort(clusters.begin(), clusters.end());
     std::reverse(clusters.begin(), clusters.end());
 
+    // big enough clusters are validated by default
     auto start = validateBiggestClusters_2(clusters, dataSetSize);
 
 
@@ -304,6 +310,7 @@ void validateBiggestClusters(std::vector<Cluster> &clusters, int dataSetSize) {
 
     std::vector<int> sizes;
 
+    // compare sizes of remaining clusters
     for(int i = start; i < clusters.size(); i++) {
         sizes.emplace_back(clusters[i].size());
     }
@@ -315,16 +322,14 @@ void validateBiggestClusters(std::vector<Cluster> &clusters, int dataSetSize) {
     std::adjacent_difference(sizes.begin(), sizes.end(), sizes.begin());
     std::transform(sizes.begin(), sizes.end(), sizes.begin(), [](int s) {return s > 0 ? s : -s;});
 
-
     auto it = std::max_element(sizes.begin() + 1, sizes.end());
-    if(*it > 4) {
+    if(*it >= 4) {
         auto index = std::distance(sizes.begin(), it);
 
         for(int i = start; i < start + index; i++) {
             clusters[i].validate();
         }
     }
-
 }
 
 int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) {
