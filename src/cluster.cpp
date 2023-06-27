@@ -82,15 +82,19 @@ std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
 
         for(int i = 0; i < std::min(1UL, points.size()); i++) { // change 1UL value if want to make bigger clusters
             // computing probability according to last selected point
-//            std::discrete_distribution<> d = p->computeProbabilitiesFor(points.points());
-//            std::random_device rd;
-//            std::mt19937 gen(rd());
+            std::discrete_distribution<> d = p->computeProbabilitiesFor(points.points());
+            std::random_device rd;
+            std::mt19937 gen(rd());
 
-//            int point_index = d(gen);
+            int point_index = d(gen);
 
             // what if second point is chosen uniformly ?
-            int point_index = std::rand() % points.size();
 
+//            int point_index = std::rand() % points.size();
+
+            if(point_index == i) {
+                point_index = (point_index+1)%points.size();
+            }
             clusterPoints.emplace_back(points.at(point_index));
         }
 

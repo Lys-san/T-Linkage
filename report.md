@@ -55,5 +55,10 @@ I started optimizing the code (faster vector operations, etc...), and went from 
 
 Note : current computer has 4 processors. 
 
+------------------------------
 
+27-06-2023
+
+I think i broke my code (or maybe he wa already broken, I just did not notice)? Sometimes the algorithm keeps on linking clusters that should not be linked together, and as a result, i end up with 1 cluster containing the while data set.
+The T-Linkage algorithm should work well, but the problem shoul be in the model sampling function.
 

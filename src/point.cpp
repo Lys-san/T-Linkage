@@ -123,15 +123,15 @@ void Point::addNoise(double maxNoise) {
 
 
 std::discrete_distribution<> Point::computeProbabilitiesFor(const std::vector<std::shared_ptr<Point>> &points) {
-    std::set<double> tmp;
+    std::vector<double> tmp;
 
     for(auto point : points) {
         if(*this == *point) {
-            tmp.emplace(0.);
+            tmp.emplace_back(0.);
         }
         else {
             double p = (std::exp(-squaredDistance(*this, *point)/SQUARED_SIGMA))/Z;
-            tmp.emplace(p);
+            tmp.emplace_back(p);
         }
     }
 

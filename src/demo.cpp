@@ -33,6 +33,11 @@ int main(int argc, char **argv) {
         fprintf(stderr, "usage:\n./tlk [image.png]\n");
         return -1;
     }
+
+    // seed initialization
+    srand((unsigned int)time(0));
+
+
     int windowWidth, windowHeight;
     PointPool dataSet;
 
@@ -62,14 +67,12 @@ int main(int argc, char **argv) {
         cv::imshow("tmp", image);
 
         dataSet = extractPointsFromImage(image);
-
     }
     else {
         windowWidth = WINDOW_WIDTH;
         windowHeight = WINDOW_HEIGHT;
 
-        // seed initialization
-        srand((unsigned int)time(0));
+
 
         // random point generation
 //        dataSet = Point::generateRandomDataSetOfSize(N_OUTLIERS);
@@ -94,6 +97,12 @@ int main(int argc, char **argv) {
     // extract models from clusterized set
     auto models = extractModels(modelClusters);
     std::cout << "[DEBUG] Extracted " << models.size() << " models" << std::endl;
+
+    /////////////////////////-->
+    for(auto model : models) {
+        std::cout << model << std::endl;
+    }
+    //<--///////////////////////
     auto clusters = Cluster::clusterize(dataSet);
     std::cout << "[DEBUG] Starting with " << clusters.size() << " clusters. " << std::endl;
 
@@ -129,13 +138,31 @@ int main(int argc, char **argv) {
     auto end = chrono::steady_clock::now();
 
     // display models
-//    validateBiggestClusters(clusters, dataSet.size());
-    validateNBiggestClusters(4, clusters);
+    validateBiggestClusters(clusters, dataSet.size());
+//    validateNBiggestClusters(1, clusters);
 
     auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
     Imagine::setActiveWindow(resWindow);
     Cluster::displayValidated(clusters, windowWidth, windowHeight);
     Cluster::displayModels(clusters, windowWidth, windowHeight);
+    // for debug : find model tha has the most corresponding points
+    auto pf = clusters[1].computePF(models, dataSet);
+    auto max = 0;
+    auto maxIndex = 0;
+    auto index = 0;
+    for(auto value : pf) {
+        if(value > max) {
+            max = value;
+            maxIndex = index;
+        }
+        index++;
+    }
+
+    auto tmpWindoww = Imagine::openWindow(windowWidth, windowHeight, "models", windowWidth, 10);
+    Imagine::setActiveWindow(tmpWindoww);
+    models[maxIndex].display(windowWidth, windowHeight);
+
+    std::cout << "model found has points " << models[maxIndex].a() << " " << models[maxIndex].b() << std::endl;
 
     std::cout << "[DEBUG] Ending with " << clusters.size() << " clusters after " << linkIndex << " linkages." << std::endl;
     cout << "Time took : " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << std::endl;

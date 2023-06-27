@@ -182,6 +182,10 @@ Point Line::randomPoint() {
 
 
 double distance(Line line, Point point) {
+    if(line.a() == INFTY) {
+        return std::abs(line.b() - point.y());
+    }
+
     auto x = point.x();
     auto y = point.y();
 

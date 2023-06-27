@@ -81,8 +81,8 @@ PointPool extractPointsFromImage(const cv::Mat &image) {
                 auto y = i/static_cast<double>(image.rows);
 
                 // round to limit the number of points that we save
-                x = std::round(x * ROUND_VALUE)/ROUND_VALUE;
-                y = std::round(y * ROUND_VALUE)/ROUND_VALUE;
+//                x = std::round(x * ROUND_VALUE)/ROUND_VALUE;
+//                y = std::round(y * ROUND_VALUE)/ROUND_VALUE;
 
                 Point p =  Point(x, y);
                 points.insert(p, FILTER_VALUE);
