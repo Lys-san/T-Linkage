@@ -25,9 +25,16 @@ bool loadImage(const std::string &path, cv::Mat &image);
 /**
  * Applies a sobel filter to the given image.
  *
- * @param img
+ * @param image
  */
-void contour(cv::Mat &image);
+void contourSobel(cv::Mat &image);
+
+/**
+ * Applies a canny filter to the given image.
+ *
+ * @param image
+ */
+void contourCanny(cv::Mat &image);
 
 /**
  * Returns the average greyscale value of a given image.

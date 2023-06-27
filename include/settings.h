@@ -8,10 +8,10 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#define TAU           0.005      // works like a threshold for PF computing (works well with TAU=0.005)
+#define TAU           0.00005      // works like a threshold for PF computing (works well with TAU=0.005)
 #define Z             1          // normalization constant (in fact, we can keep it to 1)
-#define SQUARED_SIGMA 0.001      // for random sampling
-#define N_MODELS_TO_DRAW 50
+#define SQUARED_SIGMA 0.001      // for random sampling (default : 0.001
+#define N_MODELS_TO_DRAW 100
 
 ////////////////////////////////////////////////////////////////////
 
@@ -38,9 +38,11 @@
 ///////////////////////////////////////////////////////////////////////////
 // adjust these parameters for testing with an input image
 
-#define DEFAULT_IMAGE "uni.jpg" // image to load from the input folder
-#define FILTER_VALUE  100        // must be > 1 (the more the value gets the less points will be kept)
-#define ROUND_VALUE   50.          // must be > 0.
+#define DEFAULT_IMAGE "shapes.jpg" // image to load from the input folder
+#define CANNY_THRESHOLD_1 100
+#define CANNy_THRESHOLD_2 3*CANNY_THRESHOLD_1
+#define FILTER_VALUE  10        // must be > 1 (the more the value gets the less points will be kept)
+#define ROUND_VALUE   1000.          // must be > 0.
                                    // The bigger this value gets, the more accurate the data set will be generated.
                                    // The more close to 0 the value gets, the more pixelated the dataset will be generated.
 

@@ -89,9 +89,9 @@ bool Line::operator==(const Line &other) const {
     return _a == other._a && _b == other._b;
 }
 
-void Line::display() {
-    Point tmp1 = _p1.scale(WINDOW_WIDTH, WINDOW_HEIGHT);
-    Point tmp2 = _p2.scale(WINDOW_WIDTH, WINDOW_HEIGHT);
+void Line::display(int windowWidth, int windowHeight) {
+    Point tmp1 = _p1.scale(windowWidth, windowHeight);
+    Point tmp2 = _p2.scale(windowWidth, windowHeight);
     Imagine::drawLine(tmp1.x(), tmp1.y(), tmp2.x(), tmp2.y(), LINE_COLOR);
 }
 
@@ -135,7 +135,7 @@ std::set<Point> Line::generateStarModel() {
     return inliers;
 }
 
-Line Line::leastSquares(const std::vector<Point> &points) {
+Line Line::leastSquares(const std::vector<std::shared_ptr<Point>> &points) {
     double xSum = 0.;
     double ySum = 0.;
     double xySum = 0.;
@@ -143,10 +143,10 @@ Line Line::leastSquares(const std::vector<Point> &points) {
 
 
     for(auto point : points) {
-        xSum += point.x();
-        ySum += point.y();
-        xySum += point.x()*point.y();
-        xSquaredSum += pow(point.x(), 2);
+        xSum += point->x();
+        ySum += point->y();
+        xySum += point->x()*point->y();
+        xSquaredSum += pow(point->x(), 2);
     }
 
     double a = (xSum*ySum - points.size()*xySum)/(pow(xSum, 2) - points.size()*xSquaredSum);

@@ -38,19 +38,31 @@ int main(int argc, char **argv) {
 
 
     // load image
-    if(argc == 2) {
+    if(1) {
+        std::cout << "here" << std::endl;
         cv::Mat image;
-        if(!loadImage(argv[1], image)) {
+//        if(!loadImage(argv[1], image)) {
+//            return -1;
+//        }
+        std::string imageSrc = "../SymmLinkage/input/"; // change to /input for final commit
+        imageSrc += DEFAULT_IMAGE;
+
+        if(!loadImage(imageSrc, image)) {
             return -1;
         }
+
         cv::imshow("Input image", image);
 
-        contour(image);
+        contourCanny(image);
+
+
         windowWidth = image.cols;
         windowHeight = image.rows;
 
-        auto tmp = extractPointsFromImage(image);
-        Imagine::openWindow(windowWidth, windowHeight);
+        cv::imshow("tmp", image);
+
+        dataSet = extractPointsFromImage(image);
+
     }
     else {
         windowWidth = WINDOW_WIDTH;
@@ -71,21 +83,35 @@ int main(int argc, char **argv) {
             }
         }
 
-    //    auto inliers = Line::generateStarModel();
-    //    dataSet.insert(inliers.begin(), inliers.end());
+//    //    auto inliers = Line::generateStarModel();
+//    //    dataSet.insert(inliers.begin(), inliers.end());
     }
-    Imagine::openWindow(windowHeight, windowHeight);
+    std::cout << windowWidth << " " << windowHeight << std::endl;
+    Imagine::openWindow(windowWidth, windowHeight);
 
     // cluster generation
     auto modelClusters = Cluster::clusterizePairs(dataSet);
     // extract models from clusterized set
     auto models = extractModels(modelClusters);
     std::cout << "[DEBUG] Extracted " << models.size() << " models" << std::endl;
-    auto clusters = Cluster::clusterize(dataSet); // <- comment for last version of the algorithm
-//    auto clusters = modelClusters; // <- uncomment for last version of the algorithm
+    auto clusters = Cluster::clusterize(dataSet);
     std::cout << "[DEBUG] Starting with " << clusters.size() << " clusters. " << std::endl;
 
     Cluster::displayClusters(clusters, windowWidth, windowHeight);
+
+    ////////////////////////-->
+    /// for debug (remove after)
+    ///
+    auto tmpWindow = Imagine::openWindow(windowWidth, windowHeight, "models", windowWidth, 10);
+    Imagine::setActiveWindow(tmpWindow);
+
+    int i = 0;
+    for(auto model : models) {
+        model.display(windowWidth, windowHeight);
+
+    }
+
+    //<--/////////////////////////////////////
 
     // START ALGORITHM
     auto start = chrono::steady_clock::now();
@@ -103,12 +129,13 @@ int main(int argc, char **argv) {
     auto end = chrono::steady_clock::now();
 
     // display models
-    validateBiggestClusters(clusters, dataSet.size());
+//    validateBiggestClusters(clusters, dataSet.size());
+    validateNBiggestClusters(4, clusters);
 
-    auto resWindow = Imagine::openWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "results", WINDOW_WIDTH, 10);
+    auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
     Imagine::setActiveWindow(resWindow);
     Cluster::displayValidated(clusters, windowWidth, windowHeight);
-//    Cluster::displayModels(clusters);
+    Cluster::displayModels(clusters, windowWidth, windowHeight);
 
     std::cout << "[DEBUG] Ending with " << clusters.size() << " clusters after " << linkIndex << " linkages." << std::endl;
     cout << "Time took : " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << std::endl;

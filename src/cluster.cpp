@@ -22,53 +22,80 @@ Cluster::Cluster(const std::vector<std::shared_ptr<Point>> &points) {
 Cluster::~Cluster() {}
 
 
+//std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
+//    auto dataSet = points;         // copy data set points
+//    std::vector<Cluster> clusters; // our set of clusters
+
+//    int index = 0;
+
+//    // building clusters until no more points in data set
+//    while(dataSet.size() > 0) {
+//        std::vector<std::shared_ptr<Point>> clusterPoints;         // will store points from our cluster
+
+//        auto test = clusterPoints.begin();
+
+//        // retrieve a first random point from data set
+//        auto i = std::rand() % dataSet.size();
+//        auto p = dataSet.retrievePointAt(i);
+//        clusterPoints.emplace_back(p);
+
+
+//        for(int i = 0; i < std::min(1UL, dataSet.size()); i++) { // change 1UL value if want to make bigger clusters
+//            // computing probability according to last selected point
+//            std::discrete_distribution<> d = p->computeProbabilitiesFor(dataSet.points());
+//            std::random_device rd;
+//            std::mt19937 gen(rd());
+
+//            int point_index = d(gen);
+
+//            // what if second point is chosen uniformly ?
+////            int point_index = std::rand() % dataSet.size();
+
+//            clusterPoints.emplace_back(dataSet.retrievePointAt(point_index));
+//        }
+
+//        auto cluster = Cluster(clusterPoints);
+//        clusters.emplace_back(cluster);
+//        if(++index >= N_MODELS_TO_DRAW) {
+//            break;
+//        }
+//    }
+//    std::cout<< "[DEBUG] End of random sampling. Generated "
+//             << clusters.size()  << " models for total data of size  : " << points.size() << std::endl;
+//    return clusters;
+//}
+
 std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
-    auto dataSet = points;         // copy data set points
     std::vector<Cluster> clusters; // our set of clusters
 
     int index = 0;
 
     // building clusters until no more points in data set
-    while(dataSet.size() > 0) {
+    while(index++  < N_MODELS_TO_DRAW) {
         std::vector<std::shared_ptr<Point>> clusterPoints;         // will store points from our cluster
 
-        auto test = clusterPoints.begin();
-
         // retrieve a first random point from data set
-        auto i = std::rand() % dataSet.size();
-//        auto it = dataSet.begin();
-//        std::advance(it, i);
-//        clusterPoints.emplace_back(dataSet.at(i));
-//        dataSet.erase(it);
-        clusterPoints.emplace_back(dataSet.retrievePointAt(i));
+        auto i = std::rand() % points.size();
+        auto p = points.at(i);
+        clusterPoints.emplace_back(p);
 
 
-        for(int i = 0; i < std::min(1UL, dataSet.size()); i++) { // change 1UL value if want to make bigger clusters
+        for(int i = 0; i < std::min(1UL, points.size()); i++) { // change 1UL value if want to make bigger clusters
             // computing probability according to last selected point
-//            std::discrete_distribution<> d = p->computeProbabilitiesFor(dataSet);
+//            std::discrete_distribution<> d = p->computeProbabilitiesFor(points.points());
 //            std::random_device rd;
 //            std::mt19937 gen(rd());
 
 //            int point_index = d(gen);
 
             // what if second point is chosen uniformly ?
-            int point_index = std::rand() % dataSet.size();
+            int point_index = std::rand() % points.size();
 
-//            it = dataSet.begin();
-//            std::advance(it, point_index);
-//            auto p = *it;
-
-//            clusterPoints.emplace_back(p);
-//            dataSet.erase(it);
-
-            clusterPoints.emplace_back(dataSet.retrievePointAt(point_index));
+            clusterPoints.emplace_back(points.at(point_index));
         }
 
         auto cluster = Cluster(clusterPoints);
         clusters.emplace_back(cluster);
-        if(++index >= N_MODELS_TO_DRAW) {
-            break;
-        }
     }
     std::cout<< "[DEBUG] End of random sampling. Generated "
              << clusters.size()  << " models for total data of size  : " << points.size() << std::endl;
@@ -154,6 +181,15 @@ void Cluster::displayValidated(const std::vector<Cluster> &clusters, int windowW
             for(auto point : cluster.points()) {
                     point->display(windowWidth, windowHeight);
             }
+        }
+    }
+}
+
+void Cluster::displayModels(const std::vector<Cluster> &clusters, int windowWidth, int windowHeight) {
+    for(auto cluster : clusters) {
+        if(cluster.isModel()) {
+            auto model = Line::leastSquares(cluster._points);
+            model.display(windowWidth, windowHeight);
         }
     }
 }

@@ -110,7 +110,9 @@ public:
      * @brief displayModels
      * @param clusters
      */
-    static void displayModels(const std::vector<Cluster> &clusters);
+    static void displayModels(const std::vector<Cluster> &clusters,
+                              int windowWidth,
+                              int windowHeight);
 
     /**
      * Creates a line for clusters of size 2.

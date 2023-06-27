@@ -146,14 +146,14 @@ public:
 
     /** Computes and return a map associating each point from the given set to its
      *  probability of being drawn after the current point.
-     *  The futher from the curren point a point is, the higher its probability will
+     *  The closer from the curren point a point is, the higher its probability will
      *  be.
      *
      * @param points the set of points to compute probability for
      * @return a map associating each point from the given set to its probability of
      * being draw after th current point.
      */
-    std::discrete_distribution<> computeProbabilitiesFor(const std::vector<Point *> &points);
+    std::discrete_distribution<> computeProbabilitiesFor(const std::vector<std::shared_ptr<Point>> &points);
 
     std::vector<bool> computeBooleanConsensusSet(const std::vector<Point> &dateSet);
 

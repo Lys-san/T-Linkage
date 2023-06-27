@@ -4,7 +4,6 @@ list(APPEND CMAKE_FRAMEWORK_PATH /Library/Frameworks) #Mac, why not auto?
 
 find_package(Imagine REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(OpenMP)
 
 if(${OpenCV_VERSION} VERSION_LESS 2.0.0)
     message(FATAL_ERROR “OpenCV version is not compatible : ${OpenCV_VERSION}”)

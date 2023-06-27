@@ -27,6 +27,9 @@ public:
     /** Destructor */
     ~PointPool();
 
+    /** Accessor for private field _points. */
+    std::vector<std::shared_ptr<Point>> points() const;
+
     /** Insert new point in pool if not already exists. */
     bool insert(const Point &p);
 

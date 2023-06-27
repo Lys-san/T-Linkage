@@ -24,7 +24,7 @@ bool loadImage(const std::string &path, cv::Mat &image) {
 }
 
 
-void contour(cv::Mat &image) {
+void contourSobel(cv::Mat &image) {
     cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
     cv::GaussianBlur(image, image, cv::Size(7, 7), 0);
 
@@ -38,6 +38,21 @@ void contour(cv::Mat &image) {
     cv::convertScaleAbs(sobelY, absSobelY);
 
     cv::addWeighted(absSobelX, 0.5, absSobelY, 0.5, 0, image);
+}
+
+void contourCanny(cv::Mat &image) {
+    cv::Mat out, edges;
+    out.create(image.size(), image.type());
+
+    cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
+
+    cv::blur(image, edges, cv::Size(3, 3));
+    cv::Canny(image, edges, CANNY_THRESHOLD_1, CANNy_THRESHOLD_2);
+
+    out = cv::Scalar::all(0); // black image
+    image.copyTo(out, edges);
+    image = out.clone();
+
 }
 
 unsigned char getAveragePixelValueFrom(const cv::Mat &image) {

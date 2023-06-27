@@ -91,7 +91,7 @@ public:
     std::set<Point> generateRandomInliers(unsigned int n);
 
     /** Screen display of a line. */
-    void display();
+    void display(int windowWidth, int windowHeight);
 
     /** Screen display of a line with a certain color. */
     void display(Imagine::Color color);
@@ -114,7 +114,7 @@ public:
      * @param points
      * @return
      */
-    static Line leastSquares(const std::vector<Point> &points);
+    static Line leastSquares(const std::vector<std::shared_ptr<Point>> &points);
 
 
 private:

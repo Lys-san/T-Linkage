@@ -19,6 +19,9 @@ bool PointPool::insert(const Point &p) {
     return true;
 }
 
+std::vector<std::shared_ptr<Point>> PointPool::points() const {
+    return _points;
+}
 bool PointPool::insert(const Point &p, int filterValue) {
     for(auto point : _points) {
         if(*point == p) {
