@@ -62,3 +62,5 @@ Note : current computer has 4 processors.
 I think i broke my code (or maybe he wa already broken, I just did not notice)? Sometimes the algorithm keeps on linking clusters that should not be linked together, and as a result, i end up with 1 cluster containing the while data set.
 The T-Linkage algorithm should work well, but the problem shoul be in the model sampling function.
 
+Edit : I think I solved the problem (as I am no longer able to reproduce it). The problem was with vertical line models : as they are represented with their form ax = b, a value tends to INFTY and this falsifies point to line distance computing (result always tends to 0, in consequence, all points match with vertical line models).
+

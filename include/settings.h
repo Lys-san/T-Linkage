@@ -11,7 +11,7 @@
 #define TAU           0.005      // works like a threshold for PF computing (works well with TAU=0.005)
 #define Z             1          // normalization constant (in fact, we can keep it to 1)
 #define SQUARED_SIGMA 0.001      // for random sampling (default : 0.001
-#define N_MODELS_TO_DRAW 50
+#define N_MODELS_TO_DRAW 250
 
 ////////////////////////////////////////////////////////////////////
 

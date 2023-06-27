@@ -65,6 +65,48 @@ double Line::squaredLength() {
     return squaredDistance(_p1, _p2);
 }
 
+std::vector<Line> Line::drawModels(unsigned int n, const PointPool &dataSet) {
+    std::set<Line> models; // our set of clusters
+
+    int index = 0;
+
+    // building clusters until no more points in data set
+    while(models.size()  < N_MODELS_TO_DRAW) {
+        std::vector<std::shared_ptr<Point>> clusterPoints;         // will store points from our cluster
+
+        // retrieve a first random point from data set
+        auto i = std::rand() % dataSet.size();
+        auto p1 = dataSet.at(i);
+
+
+        // computing probability according to last selected point
+        std::discrete_distribution<> d = p1->computeProbabilitiesFor(dataSet.points());
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        int point_index = d(gen);
+
+        // what if second point is chosen uniformly ?
+
+        //            int point_index = std::rand() % points.size();
+
+        while(point_index == i) {
+            point_index = d(gen);
+        }
+        auto p2 = dataSet.at(point_index);
+
+
+//        auto cluster = Cluster(clusterPoints);
+//        clusters.emplace_back(cluster);
+        models.insert(Line(*p1, *p2));
+    }
+    std::cout<< "[DEBUG] End of random sampling. Generated "
+             << models.size()  << " models for total data of size  : " << dataSet.size() << std::endl;
+    std::vector<Line> vec(models.begin(), models.end());
+    return vec;
+}
+
+
 std::set<Point> Line::generateRandomInliers(unsigned int n) {
     std::set<Point> inliers;
     for(int i = 0; i < n; i++) {
@@ -74,6 +116,7 @@ std::set<Point> Line::generateRandomInliers(unsigned int n) {
     }
     return inliers;
 }
+
 
 
 std::ostream &operator<<(std::ostream &out, Line &line) {

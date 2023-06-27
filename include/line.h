@@ -6,7 +6,7 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include "point.h"
+#include "pointpool.h"
 #include "settings.h"
 #include <float.h>
 #include <Imagine/Graphics.h>
@@ -80,7 +80,8 @@ public:
     /** Returns the squared distanc seperating the Line's 2 points. */
     double squaredLength();
 
-
+    /** Draws and returns n models from the given dataSet. */
+    static std::vector<Line> drawModels(unsigned int n, const PointPool &dataSet);
 
     /**
      * Generates n random inlier points that matches with the line model.

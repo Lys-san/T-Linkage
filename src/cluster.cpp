@@ -92,8 +92,8 @@ std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
 
 //            int point_index = std::rand() % points.size();
 
-            if(point_index == i) {
-                point_index = (point_index+1)%points.size();
+            while(point_index == i) {
+                point_index = d(gen);
             }
             clusterPoints.emplace_back(points.at(point_index));
         }
@@ -105,6 +105,8 @@ std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
              << clusters.size()  << " models for total data of size  : " << points.size() << std::endl;
     return clusters;
 }
+
+
 
 std::vector<Cluster> Cluster::clusterize(const PointPool &points) {
     std::vector<Cluster> clusters;
@@ -376,6 +378,7 @@ int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) {
     assert(clusters.size() > 0);
 
     int minSize = 0.1 * dataSetSize;
+    minSize = 21;
     std::cout << minSize << std::endl;
 
     int index = 0;
@@ -393,11 +396,12 @@ int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) {
 }
 
 std::vector<Line> extractModels(const std::vector<Cluster> &clusters) {
-    std::vector<Line> models;
+    std::set<Line> models;
     for(auto cluster : clusters) {
         if(cluster.size() == 2) {
-            models.emplace_back(cluster.extractLineModel());
+            models.insert(cluster.extractLineModel());
         }
     }
-    return models;
+    std::vector<Line> returnModels(models.begin(), models.end());
+    return returnModels;
 }
