@@ -43,7 +43,6 @@ int main(int argc, char **argv) {
 
     // load image
     if(1) {
-        std::cout << "here" << std::endl;
         cv::Mat image;
 //        if(!loadImage(argv[1], image)) {
 //            return -1;
@@ -131,16 +130,15 @@ int main(int argc, char **argv) {
         std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
-//    validateNBiggestClusters(4, clusters);
+    validateNBiggestClusters(8, clusters);
 //    validateBiggestClusters(clusters, dataSet.size());
-//    validateBiggestClusters_3(clusters, 5);
+//    validateBiggestClusters_3(clusters, 9);
 
     // display models
 
     auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
     Imagine::setActiveWindow(resWindow);
     Cluster::displayValidated(clusters, windowWidth, windowHeight);
-    Cluster::displayClustersWithColors(clusters);
 
     Cluster::displayModels(clusters, windowWidth, windowHeight);
 

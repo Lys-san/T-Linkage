@@ -11,7 +11,7 @@
 #define TAU           0.001      // works like a threshold for PF computing (works well with TAU=0.005)
 #define Z             1          // normalization constant (in fact, we can keep it to 1)
 #define SQUARED_SIGMA 0.001      // for random sampling (default : 0.001
-#define N_MODELS_TO_DRAW 120
+#define N_MODELS_TO_DRAW 70
 
 ////////////////////////////////////////////////////////////////////
 
@@ -38,10 +38,10 @@
 ///////////////////////////////////////////////////////////////////////////
 // adjust these parameters for testing with an input image
 
-#define DEFAULT_IMAGE "shapes_2.jpg" // image to load from the input folder
+#define DEFAULT_IMAGE "board.jpg" // image to load from the input folder
 #define CANNY_THRESHOLD_1 100
 #define CANNy_THRESHOLD_2 3*CANNY_THRESHOLD_1
-#define FILTER_VALUE  10        // must be > 1 (the more the value gets the less points will be kept)
+#define FILTER_VALUE  20        // must be > 1 (the more the value gets the less points will be kept)
                                 //     (default : 10)
 #define ROUND_VALUE   10000.          // must be > 0.
                                    // The bigger this value gets, the more accurate the data set will be generated.

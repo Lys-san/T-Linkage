@@ -240,7 +240,7 @@ Point Line::randomPoint() {
 
 double distance(Line line, Point point) {
     if(line.a() == INFTY) {
-        return std::abs(line.b() - point.y());
+        return std::abs(line.p1().x() - point.x());
     }
 
     auto x = point.x();
