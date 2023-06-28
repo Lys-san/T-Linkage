@@ -3,18 +3,31 @@
 Line::Line() {}
 
 
-Line::Line(Point p1, Point p2):
-    _p1 {p1},
-    _p2 {p2} {
+Line::Line(Point p1, Point p2) {
+    double x1, x2;
     // calculate _a and _b values at initialization
     if(p1.x() == p2.x()) {
         _a = INFTY;
+        _b = p1.y() - _a*p1.x();
+
+        x1 = p1.x();
+        x2 = x1;
+
+        _p1 = Point(p1.x(), 0.);
+        _p2 = Point(p2.x(), 1.);
+
     }
     else {
         _a = (p2.y() - p1.y())/(p2.x() - p1.x());
+        _b = p1.y() - _a*p1.x();
+
+        x1 = _b;
+        x2 = _a + _b;
+
+        _p1 = Point(0., x1);
+        _p2 = Point(1., x2);
     }
 
-    _b = p1.y() - _a*p1.x();
 }
 
 
@@ -66,18 +79,18 @@ double Line::squaredLength() {
 }
 
 std::vector<Line> Line::drawModels(unsigned int n, const PointPool &dataSet) {
-
-    std::set<Line> models; // our set of clusters
+    std::vector<Line> models; // our set of clusters
 
     int index = 0;
     std::set<int> indexes; // drawn indexes
 
     // building clusters until no more points in data set
     while(models.size()  < N_MODELS_TO_DRAW) {
+        auto insert = true;
+
+
         // retrieve a first new random point from data set
         int i;
-//        do i = std::rand() % dataSet.size();
-//        while(!indexes.insert(i).second);
         i = std::rand() % dataSet.size();
 
         auto p1 = dataSet.at(i);
@@ -88,20 +101,23 @@ std::vector<Line> Line::drawModels(unsigned int n, const PointPool &dataSet) {
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        int point_index;
-
-//        do point_index = d(gen);
-//        while(indexes.find(point_index) != indexes.end());
-        point_index = d(gen);
-
+        int point_index = d(gen);
         auto p2 = dataSet.at(point_index);
 
-        models.insert(Line(*p1, *p2));
+        auto model = Line(*p1, *p2);
+        for(auto line : models) {
+            if(model == line) {
+                insert = false;
+            }
+        }
+
+        if(insert) {
+            models.emplace_back(Line(*p1, *p2));
+        }
     }
     std::cout<< "[DEBUG] End of random sampling. Generated "
              << models.size()  << " models for total data of size  : " << dataSet.size() << std::endl;
-    std::vector<Line> vec(models.begin(), models.end());
-    return vec;
+    return models;
 }
 
 
@@ -115,19 +131,19 @@ std::set<Point> Line::generateRandomInliers(unsigned int n) {
     return inliers;
 }
 
-
-
 std::ostream &operator<<(std::ostream &out, Line &line) {
     out << line.a() << "x + " << line.b();
     return out;
 }
 
 bool Line::operator<(const Line &other) const {
-    return _a < other._a && _b != other._b; // actually this is a random definition, just to be able to make sets
+    double b = _b == 0 ? _b + 1 : _b;;
+    double other_b = other.b() == 0 ? other.b() + 1 : other.b();
+    return _a/b < other.a()/other_b; // actually this is a random definition, just to be able to make sets
 }
 
 bool Line::operator==(const Line &other) const {
-    return _a == other._a && _b == other._b;
+    return std::abs(_a - other._a) < 0.01 && std::abs(_b - other._b) < 0.01;
 }
 
 void Line::display(int windowWidth, int windowHeight) {

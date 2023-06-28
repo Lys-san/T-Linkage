@@ -64,3 +64,8 @@ The T-Linkage algorithm should work well, but the problem shoul be in the model 
 
 Edit : I think I solved the problem (as I am no longer able to reproduce it). The problem was with vertical line models : as they are represented with their form ax = b, a value tends to INFTY and this falsifies point to line distance computing (result always tends to 0, in consequence, all points match with vertical line models).
 
+------------------------------
+
+28-06-2023
+
+I found what seems to be a very problematic issue. When it comes to models generation from a square like figure, drawn models tends to cluster at the corners. Which is very problematic as searched models are acually the borders of the figure. For the moment I don't know if it is a natural bius (more points at the edges ?) or if is linked to the way points are stored/drawn.

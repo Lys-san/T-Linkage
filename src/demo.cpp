@@ -62,6 +62,12 @@ int main(int argc, char **argv) {
         windowHeight = image.rows;
 
         dataSet = extractPointsFromImage(image);
+
+        if(dataSet.size() == 0) {
+            fprintf(stderr,
+                    "Error : could not generate data set.\n"
+                    "Make sure that the FILTER_VALUE is not too big.");
+        }
     }
     else {
         windowWidth = WINDOW_WIDTH;
@@ -77,16 +83,25 @@ int main(int argc, char **argv) {
                 dataSet.insert(point);
             }
         }
+        if(dataSet.size() == 0) {
+            fprintf(stderr,
+                    "Error : could not generate data set.\n"
+                    "Make sure that the summ of the INLIER and OUTLIER parameters"
+                    " is strictly superior than 0.");
+        }
     }
+
     Imagine::openWindow(windowWidth, windowHeight);
 
-    // extract models from clusterized set
-    auto models = Line::drawModels(N_MODELS_TO_DRAW, dataSet);
+
     // cluster generation
     auto clusters = Cluster::clusterize(dataSet);
     std::cout << "[DEBUG] Starting with " << clusters.size() << " clusters. " << std::endl;
 
     Cluster::displayClusters(clusters, windowWidth, windowHeight);
+
+    // extract models from clusterized set
+    auto models = Line::drawModels(N_MODELS_TO_DRAW, dataSet);
 
     ////////////////////////-->
     /// for debug (remove after)
@@ -116,7 +131,8 @@ int main(int argc, char **argv) {
         std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
-    validateBiggestClusters(clusters, dataSet.size());
+//    validateNBiggestClusters(4, clusters);
+//    validateBiggestClusters(clusters, dataSet.size());
 //    validateBiggestClusters_3(clusters, 5);
 
     // display models
@@ -124,7 +140,9 @@ int main(int argc, char **argv) {
     auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
     Imagine::setActiveWindow(resWindow);
     Cluster::displayValidated(clusters, windowWidth, windowHeight);
-//    Cluster::displayModels(clusters, windowWidth, windowHeight);
+    Cluster::displayClustersWithColors(clusters);
+
+    Cluster::displayModels(clusters, windowWidth, windowHeight);
 
     std::cout << "[DEBUG] Ending with " << clusters.size() << " clusters after " << linkIndex << " linkages." << std::endl;
     cout << "Time took : " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << std::endl;
