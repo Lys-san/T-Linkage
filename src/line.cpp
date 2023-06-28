@@ -66,16 +66,20 @@ double Line::squaredLength() {
 }
 
 std::vector<Line> Line::drawModels(unsigned int n, const PointPool &dataSet) {
+
     std::set<Line> models; // our set of clusters
 
     int index = 0;
+    std::set<int> indexes; // drawn indexes
 
     // building clusters until no more points in data set
     while(models.size()  < N_MODELS_TO_DRAW) {
-        std::vector<std::shared_ptr<Point>> clusterPoints;         // will store points from our cluster
+        // retrieve a first new random point from data set
+        int i;
+//        do i = std::rand() % dataSet.size();
+//        while(!indexes.insert(i).second);
+        i = std::rand() % dataSet.size();
 
-        // retrieve a first random point from data set
-        auto i = std::rand() % dataSet.size();
         auto p1 = dataSet.at(i);
 
 
@@ -84,20 +88,14 @@ std::vector<Line> Line::drawModels(unsigned int n, const PointPool &dataSet) {
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        int point_index = d(gen);
+        int point_index;
 
-        // what if second point is chosen uniformly ?
+//        do point_index = d(gen);
+//        while(indexes.find(point_index) != indexes.end());
+        point_index = d(gen);
 
-        //            int point_index = std::rand() % points.size();
-
-        while(point_index == i) {
-            point_index = d(gen);
-        }
         auto p2 = dataSet.at(point_index);
 
-
-//        auto cluster = Cluster(clusterPoints);
-//        clusters.emplace_back(cluster);
         models.insert(Line(*p1, *p2));
     }
     std::cout<< "[DEBUG] End of random sampling. Generated "

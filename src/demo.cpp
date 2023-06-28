@@ -1,7 +1,7 @@
-/** 
+﻿/** 
  * Author        : Lysandre M. (lysandre.macke@enpc.fr)
  * Created       : 04-26-2023
- * Last modified : 05-31-2023
+ * Last modified : 06-28-2023
  * 
  * Implementation of the T-linkage algorithm for multi-model estimation.
  * Using the Imagine++ library.
@@ -37,7 +37,6 @@ int main(int argc, char **argv) {
     // seed initialization
     srand((unsigned int)time(0));
 
-
     int windowWidth, windowHeight;
     PointPool dataSet;
 
@@ -49,7 +48,7 @@ int main(int argc, char **argv) {
 //        if(!loadImage(argv[1], image)) {
 //            return -1;
 //        }
-        std::string imageSrc = "../SymmLinkage/input/"; // change to /input for final commit
+        std::string imageSrc = "../T-Linkage/input/"; // change to /input for final commit
         imageSrc += DEFAULT_IMAGE;
 
         if(!loadImage(imageSrc, image)) {
@@ -57,14 +56,10 @@ int main(int argc, char **argv) {
         }
 
         cv::imshow("Input image", image);
-
         contourCanny(image);
-
 
         windowWidth = image.cols;
         windowHeight = image.rows;
-
-        cv::imshow("tmp", image);
 
         dataSet = extractPointsFromImage(image);
     }
@@ -72,10 +67,7 @@ int main(int argc, char **argv) {
         windowWidth = WINDOW_WIDTH;
         windowHeight = WINDOW_HEIGHT;
 
-
-
         // random point generation
-//        dataSet = Point::generateRandomDataSetOfSize(N_OUTLIERS);
         dataSet = PointPool::generateRandomDataSetOfSize(N_OUTLIERS);
 
         // generate models with noise
@@ -85,11 +77,7 @@ int main(int argc, char **argv) {
                 dataSet.insert(point);
             }
         }
-
-//    //    auto inliers = Line::generateStarModel();
-//    //    dataSet.insert(inliers.begin(), inliers.end());
     }
-    std::cout << windowWidth << " " << windowHeight << std::endl;
     Imagine::openWindow(windowWidth, windowHeight);
 
     // extract models from clusterized set
@@ -128,15 +116,15 @@ int main(int argc, char **argv) {
         std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
+    validateBiggestClusters(clusters, dataSet.size());
+//    validateBiggestClusters_3(clusters, 5);
 
     // display models
-    validateBiggestClusters(clusters, dataSet.size());
-//    validateNBiggestClusters(1, clusters);
 
     auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
     Imagine::setActiveWindow(resWindow);
     Cluster::displayValidated(clusters, windowWidth, windowHeight);
-    Cluster::displayModels(clusters, windowWidth, windowHeight);
+//    Cluster::displayModels(clusters, windowWidth, windowHeight);
 
     std::cout << "[DEBUG] Ending with " << clusters.size() << " clusters after " << linkIndex << " linkages." << std::endl;
     cout << "Time took : " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << std::endl;

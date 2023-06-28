@@ -191,6 +191,14 @@ void validateBiggestClusters(std::vector<Cluster> &clusters, int dataSetSize);
  *  Return the index of the last validated cluster. */
 int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize);
 
+/**
+ * Validates all clusters that have a size >= than a given threshold.
+ * @param clusters
+ * @param threshold
+ * @return
+ */
+int validateBiggestClusters_3(std::vector<Cluster> &clusters, int threshold);
+
 
 /**
  * Extract models from clusters, asserting that cluster contains the number of points required

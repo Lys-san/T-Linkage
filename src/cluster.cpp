@@ -22,53 +22,12 @@ Cluster::Cluster(const std::vector<std::shared_ptr<Point>> &points) {
 Cluster::~Cluster() {}
 
 
-//std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
-//    auto dataSet = points;         // copy data set points
-//    std::vector<Cluster> clusters; // our set of clusters
-
-//    int index = 0;
-
-//    // building clusters until no more points in data set
-//    while(dataSet.size() > 0) {
-//        std::vector<std::shared_ptr<Point>> clusterPoints;         // will store points from our cluster
-
-//        auto test = clusterPoints.begin();
-
-//        // retrieve a first random point from data set
-//        auto i = std::rand() % dataSet.size();
-//        auto p = dataSet.retrievePointAt(i);
-//        clusterPoints.emplace_back(p);
-
-
-//        for(int i = 0; i < std::min(1UL, dataSet.size()); i++) { // change 1UL value if want to make bigger clusters
-//            // computing probability according to last selected point
-//            std::discrete_distribution<> d = p->computeProbabilitiesFor(dataSet.points());
-//            std::random_device rd;
-//            std::mt19937 gen(rd());
-
-//            int point_index = d(gen);
-
-//            // what if second point is chosen uniformly ?
-////            int point_index = std::rand() % dataSet.size();
-
-//            clusterPoints.emplace_back(dataSet.retrievePointAt(point_index));
-//        }
-
-//        auto cluster = Cluster(clusterPoints);
-//        clusters.emplace_back(cluster);
-//        if(++index >= N_MODELS_TO_DRAW) {
-//            break;
-//        }
-//    }
-//    std::cout<< "[DEBUG] End of random sampling. Generated "
-//             << clusters.size()  << " models for total data of size  : " << points.size() << std::endl;
-//    return clusters;
-//}
-
 std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
     std::vector<Cluster> clusters; // our set of clusters
 
     int index = 0;
+
+    std::set<int> indexes; // store indexes that were already drawn
 
     // building clusters until no more points in data set
     while(index++  < N_MODELS_TO_DRAW) {
@@ -76,6 +35,11 @@ std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
 
         // retrieve a first random point from data set
         auto i = std::rand() % points.size();
+
+        while(indexes.find(i) != indexes.end()) {
+            i = std::rand() % points.size();
+        }
+        indexes.insert(i);
         auto p = points.at(i);
         clusterPoints.emplace_back(p);
 
@@ -92,9 +56,10 @@ std::vector<Cluster> Cluster::clusterizePairs(const PointPool &points) {
 
 //            int point_index = std::rand() % points.size();
 
-            while(point_index == i) {
+            while(indexes.find(point_index) != indexes.end()) {
                 point_index = d(gen);
             }
+            indexes.insert(point_index);
             clusterPoints.emplace_back(points.at(point_index));
         }
 
@@ -378,13 +343,33 @@ int validateBiggestClusters_2(std::vector<Cluster> &clusters, int dataSetSize) {
     assert(clusters.size() > 0);
 
     int minSize = 0.1 * dataSetSize;
-    minSize = 21;
     std::cout << minSize << std::endl;
 
     int index = 0;
 
     for(Cluster &cluster : clusters) {
         if(cluster.size() > minSize) {
+            cluster.validate();
+        }
+        else {
+            break;
+        }
+        index++;
+    }
+    return index;
+}
+
+int validateBiggestClusters_3(std::vector<Cluster> &clusters, int threshold) {
+    assert(clusters.size() > 0);
+
+    // sort by size
+    std::sort(clusters.begin(), clusters.end());
+    std::reverse(clusters.begin(), clusters.end());
+
+    int index = 0;
+
+    for(Cluster &cluster : clusters) {
+        if(cluster.size() >= threshold) {
             cluster.validate();
         }
         else {
