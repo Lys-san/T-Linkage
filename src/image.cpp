@@ -46,7 +46,7 @@ void contourCanny(cv::Mat &image) {
 
     cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
 
-    cv::blur(image, edges, cv::Size(3, 3));
+    cv::GaussianBlur(image, edges, cv::Size(7, 7), 0);
     cv::Canny(image, edges, CANNY_THRESHOLD_1, CANNy_THRESHOLD_2);
 
     out = cv::Scalar::all(0); // black image
@@ -90,6 +90,25 @@ PointPool extractPointsFromImage(const cv::Mat &image) {
         }
     }
     return points;
+}
+
+void drawLineOnImage(cv::Mat &image, Line line) {
+    // scale points
+    auto tmp1 = line.p1().scale(image.cols, image.rows);
+    auto tmp2 = line.p2().scale(image.cols, image.rows);
+
+    // convert to cv::Point
+    auto p1 = cv::Point(tmp1.x(), tmp1.y());
+    auto p2 = cv::Point(tmp2.x(), tmp2.y());
+    auto color = cv::Vec3f(0, 0, 255);
+
+    cv::line(image, p1, p2, color);
+}
+
+void drawLinesOnImage(cv::Mat &image, std::vector<Line> lines) {
+    for(auto line : lines) {
+        drawLineOnImage(image, line);
+    }
 }
 
 cv::Mat dog(const cv::Mat &image, int k1, int k2) {

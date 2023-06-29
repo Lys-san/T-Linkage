@@ -39,23 +39,25 @@ int main(int argc, char **argv) {
 
     int windowWidth, windowHeight;
     PointPool dataSet;
+    cv::Mat inputImage;
 
 
     // load image
     if(1) {
-        cv::Mat image;
 //        if(!loadImage(argv[1], image)) {
 //            return -1;
 //        }
         std::string imageSrc = "../T-Linkage/input/"; // change to /input for final commit
         imageSrc += DEFAULT_IMAGE;
 
-        if(!loadImage(imageSrc, image)) {
+        if(!loadImage(imageSrc, inputImage)) {
             return -1;
         }
 
-        cv::imshow("Input image", image);
+        cv::imshow("Input image", inputImage);
+        cv::Mat image = inputImage.clone();
         contourCanny(image);
+        cv::imshow("contour", image);
 
         windowWidth = image.cols;
         windowHeight = image.rows;
@@ -65,7 +67,8 @@ int main(int argc, char **argv) {
         if(dataSet.size() == 0) {
             fprintf(stderr,
                     "Error : could not generate data set.\n"
-                    "Make sure that the FILTER_VALUE is not too big.");
+                    "Make sure that the FILTER_VALUE and/or the CANNY_THRESHOLD is not too big.");
+            return -1;
         }
     }
     else {
@@ -87,6 +90,7 @@ int main(int argc, char **argv) {
                     "Error : could not generate data set.\n"
                     "Make sure that the summ of the INLIER and OUTLIER parameters"
                     " is strictly superior than 0.");
+            return -1;
         }
     }
 
@@ -130,17 +134,23 @@ int main(int argc, char **argv) {
         std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
-    validateNBiggestClusters(8, clusters);
-//    validateBiggestClusters(clusters, dataSet.size());
+//    validateNBiggestClusters(8, clusters);
+    validateBiggestClusters(clusters, dataSet.size());
 //    validateBiggestClusters_3(clusters, 9);
 
     // display models
 
-    auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
-    Imagine::setActiveWindow(resWindow);
-    Cluster::displayValidated(clusters, windowWidth, windowHeight);
+//    auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
+//    Imagine::setActiveWindow(resWindow);
+//    Cluster::displayValidated(clusters, windowWidth, windowHeight);
 
-    Cluster::displayModels(clusters, windowWidth, windowHeight);
+//    Cluster::displayModels(clusters, windowWidth, windowHeight);
+
+    if(1) {
+        Cluster::displayValidatedOnImage(clusters, windowWidth, windowHeight, inputImage);
+        cv::imshow("results", inputImage);
+    }
+
 
     std::cout << "[DEBUG] Ending with " << clusters.size() << " clusters after " << linkIndex << " linkages." << std::endl;
     cout << "Time took : " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << std::endl;

@@ -6,7 +6,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "pointpool.h"
+#include "line.h"
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/highgui/highgui.hpp>
@@ -51,6 +51,21 @@ unsigned char getAveragePixelValueFrom(const cv::Mat &image);
  * @return
  */
 PointPool extractPointsFromImage(const cv::Mat &image);
+
+/**
+ * Draws a line on the given image.
+ *
+ * @param image
+ * @param line
+ */
+void drawLineOnImage(cv::Mat &image, Line line);
+
+/**
+ * @brief drawLinesOnImage
+ * @param image
+ * @param lines
+ */
+void drawLinesOnImage(cv::Mat &image, std::vector<Line> lines);
 
 /**
  * Returns the DoG (Difference of Gaussians) for the given image.

@@ -156,6 +156,16 @@ void Cluster::displayValidated(const std::vector<Cluster> &clusters, int windowW
     }
 }
 
+void Cluster::displayValidatedOnImage(const std::vector<Cluster> &clusters, int windowWidth, int windowHeight, cv::Mat &image) {
+    for(auto cluster : clusters) {
+        if(cluster.isModel()) {
+            std::cout << "[DEBUG] VALID MODEL of size " << cluster.size() << std::endl;
+            auto line = Line::leastSquares(cluster._points);
+            drawLineOnImage(image, line);
+        }
+    }
+}
+
 void Cluster::displayModels(const std::vector<Cluster> &clusters, int windowWidth, int windowHeight) {
     for(auto cluster : clusters) {
         if(cluster.isModel()) {

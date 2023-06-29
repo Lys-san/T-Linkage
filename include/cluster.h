@@ -15,6 +15,7 @@
 
 #include "line.h"
 #include "pointpool.h"
+#include "image.h"
 
 
 /** Represents a cluster of points, which can eventually be view as a model hypothesis.
@@ -105,6 +106,11 @@ public:
     static void displayValidated(const std::vector<Cluster> &clusters,
                                  int windowWidth,
                                  int windowHeight);
+
+    static void displayValidatedOnImage(const std::vector<Cluster> &clusters,
+                                        int windowWidth,
+                                        int windowHeight,
+                                        cv::Mat &image);
 
     /**
      * @brief displayModels

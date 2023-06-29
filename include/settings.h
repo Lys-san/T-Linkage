@@ -8,10 +8,10 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#define TAU           0.001      // works like a threshold for PF computing (works well with TAU=0.005)
+#define TAU           0.005      // works like a threshold for PF computing (works well with TAU=0.005)
 #define Z             1          // normalization constant (in fact, we can keep it to 1)
 #define SQUARED_SIGMA 0.001      // for random sampling (default : 0.001
-#define N_MODELS_TO_DRAW 70
+#define N_MODELS_TO_DRAW 50
 
 ////////////////////////////////////////////////////////////////////
 
@@ -38,8 +38,8 @@
 ///////////////////////////////////////////////////////////////////////////
 // adjust these parameters for testing with an input image
 
-#define DEFAULT_IMAGE "board.jpg" // image to load from the input folder
-#define CANNY_THRESHOLD_1 100
+#define DEFAULT_IMAGE "enpc.jpg" // image to load from the input folder
+#define CANNY_THRESHOLD_1 300 // default : 100
 #define CANNy_THRESHOLD_2 3*CANNY_THRESHOLD_1
 #define FILTER_VALUE  20        // must be > 1 (the more the value gets the less points will be kept)
                                 //     (default : 10)

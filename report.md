@@ -59,7 +59,7 @@ Note : current computer has 4 processors.
 
 27-06-2023
 
-I think i broke my code (or maybe he wa already broken, I just did not notice)? Sometimes the algorithm keeps on linking clusters that should not be linked together, and as a result, i end up with 1 cluster containing the while data set.
+I think i broke my code (or maybe he was already broken, I just did not notice)? Sometimes the algorithm keeps on linking clusters that should not be linked together, and as a result, i end up with 1 cluster containing the whole data set.
 The T-Linkage algorithm should work well, but the problem shoul be in the model sampling function.
 
 Edit : I think I solved the problem (as I am no longer able to reproduce it). The problem was with vertical line models : as they are represented with their form ax = b, a value tends to INFTY and this falsifies point to line distance computing (result always tends to 0, in consequence, all points match with vertical line models).
@@ -69,3 +69,13 @@ Edit : I think I solved the problem (as I am no longer able to reproduce it). Th
 28-06-2023
 
 I found what seems to be a very problematic issue. When it comes to models generation from a square like figure, drawn models tends to cluster at the corners. Which is very problematic as searched models are acually the borders of the figure. For the moment I don't know if it is a natural bius (more points at the edges ?) or if is linked to the way points are stored/drawn.
+
+Edit : the problem was (again) my use of sets instead for storing unique elements. I fixed the problem by using a vector with a DIY "emplace if absent" algorithm.
+
+-------------------------------
+
+29-06-2023
+
+I'm doing tests on mutiple images. Of course, the complexity of the image impacts a lot the quality of my program. For example, the forest.jpg image cannot produce good results in any case because of the way canny filter contours it. Therefore, any relevant model can be found. The problem is the same with enpc.jpg : if the image contains really noisy parts like tree leaves, detailed patterns etc, this produces too many clustered outliers that impacts the model computing.
+This problem ma eventually be solved by increasing the canny threshold, which works for enpc.jpg (CANNY_THRESHOLD = 300) but not for forest.jpg.
+With default parameters, the program seems to work well with simple images like shapes.jpg or even mug.jpg. The only remaining problem is the outlier rejecion : how do we choose to validate or cluster or not ?

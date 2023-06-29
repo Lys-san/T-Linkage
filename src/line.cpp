@@ -79,6 +79,8 @@ double Line::squaredLength() {
 }
 
 std::vector<Line> Line::drawModels(unsigned int n, const PointPool &dataSet) {
+    assert(N_MODELS_TO_DRAW <= dataSet.size());
+
     std::vector<Line> models; // our set of clusters
 
     int index = 0;
