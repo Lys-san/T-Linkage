@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
         if(dataSet.size() == 0) {
             fprintf(stderr,
                     "Error : could not generate data set.\n"
-                    "Make sure that the FILTER_VALUE and/or the CANNY_THRESHOLD is not too big.");
+                    "Make sure that the FILTER_VALUE and/or the CANNY_THRESHOLD is not too big.\n");
             return -1;
         }
     }
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
             fprintf(stderr,
                     "Error : could not generate data set.\n"
                     "Make sure that the summ of the INLIER and OUTLIER parameters"
-                    " is strictly superior than 0.");
+                    " is strictly superior than 0.\n");
             return -1;
         }
     }
@@ -134,9 +134,9 @@ int main(int argc, char **argv) {
         std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
-//    validateNBiggestClusters(8, clusters);
+    validateNBiggestClusters(8, clusters);
     validateBiggestClusters(clusters, dataSet.size());
-//    validateBiggestClusters_3(clusters, 9);
+    validateBiggestClusters_3(clusters, 10);
 
     // display models
 
