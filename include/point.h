@@ -23,7 +23,6 @@
 #define OUTLIER_COLOR        Imagine::BLACK
 #define INLIER_COLOR         Imagine::RED
 #define POINT_COLOR          isInlier() ? INLIER_COLOR : OUTLIER_COLOR
-#define MAX_POINTS_ON_SCREEN 2048
 
 /** Represents a point in the 2D space.
  *  We work on the finite space [0, 1]x[0, 1].

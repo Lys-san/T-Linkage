@@ -134,14 +134,17 @@ int main(int argc, char **argv) {
         std::cout << "linked 2 clusters. Number of clusters : " << clusters.size() << std::endl;
     }
     auto end = chrono::steady_clock::now();
-    validateNBiggestClusters(8, clusters);
-    validateBiggestClusters(clusters, dataSet.size());
-    validateBiggestClusters_3(clusters, 10);
+//    validateNBiggestClusters(8, clusters);
+//    validateBiggestClusters(clusters, dataSet.size());
+//    validateBiggestClusters_2(clusters, dataSet.size());
+
+    validateBiggestClusters_3(clusters, 15);
 
     // display models
 
-//    auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
-//    Imagine::setActiveWindow(resWindow);
+    auto resWindow = Imagine::openWindow(windowWidth, windowHeight, "results", windowWidth, 10);
+    Imagine::setActiveWindow(resWindow);
+    Cluster::displayClustersWithColors(clusters, windowWidth, windowHeight);
 //    Cluster::displayValidated(clusters, windowWidth, windowHeight);
 
 //    Cluster::displayModels(clusters, windowWidth, windowHeight);

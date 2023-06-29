@@ -131,14 +131,14 @@ void Cluster::displayClusters(const std::vector<Cluster> &clusters, int windowWi
     }
 }
 
-void Cluster::displayClustersWithColors(const std::vector<Cluster> &clusters) {
+void Cluster::displayClustersWithColors(const std::vector<Cluster> &clusters, int windowWidth, int windowHeight) {
     Imagine::Color cols[] = COLOR_PACK;
     int i = 0;
 
     for(auto cluster:clusters) {
         auto col = cols[i % N_COLORS];
         for(auto point : cluster.points()) {
-            point->display(col);
+            point->display(col, windowWidth, windowHeight);
         }
         i++;
     }

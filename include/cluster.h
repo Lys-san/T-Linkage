@@ -96,7 +96,9 @@ public:
      *
      * @param clusters the clusters to be displayed.
      */
-    static void displayClustersWithColors(const std::vector<Cluster> &clusters);
+    static void displayClustersWithColors(const std::vector<Cluster> &clusters,
+                                          int windowWidth,
+                                          int windowHeight);
 
     /**
      * Displays only the clusters that are validated.
