@@ -10,9 +10,6 @@ Line::Line(Point p1, Point p2) {
         _a = INFTY;
         _b = p1.y() - _a*p1.x();
 
-        x1 = p1.x();
-        x2 = x1;
-
         _p1 = Point(p1.x(), 0.);
         _p2 = Point(p2.x(), 1.);
 
@@ -214,6 +211,8 @@ Line Line::leastSquares(const std::vector<std::shared_ptr<Point>> &points) {
 }
 
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////////
 
 Point Line::randomPoint() {
@@ -251,7 +250,7 @@ double distance(Line line, Point point) {
     auto a = line.a();
     auto b = line.b();
 
-    double num = std::abs(a*x -y + b);
+    double num = std::abs(a*x + b - y);
     double den = std::sqrt(a*a + 1);
     return num/den;
 }
@@ -263,4 +262,22 @@ std::vector<double> computePreferenceFunctionFor(const Point &point, const std::
         pf.emplace_back(model.PFValue(point));
     }
     return pf;
+}
+
+bool areAligned(std::vector<Point> points) {
+    assert(points.size() >= 2);
+    double threshold = 0.0001;
+
+    if(points.size() == 2) {
+        return true; // 2 points are always aligned
+    }
+
+    auto line = Line(points[0], points[1]);
+
+    for(auto i = 2; i < points.size(); i++) {
+        if(distance(line, points[i]) > threshold) {
+            return false;
+        }
+    }
+    return true;
 }

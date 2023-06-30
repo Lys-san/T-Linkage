@@ -118,6 +118,8 @@ public:
     static Line leastSquares(const std::vector<std::shared_ptr<Point>> &points);
 
 
+
+
 private:
     // private methods
 
@@ -161,4 +163,11 @@ std::vector<double> computePreferenceFunctionFor(
         const Point &point,
         const std::vector<Line> &models
         );
+
+/**
+ * Returns wether or not the given points are exactly from the same line or not.
+ * @param points
+ * @return
+ */
+bool areAligned(std::vector<Point> points);
 #endif // LINE_H
