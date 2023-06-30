@@ -27,8 +27,17 @@ public:
     /** Destructor*/
     ~Circle();
 
+    /** Accessor for private field _p. */
+    Point p() const;
+
+    /** Accessor for private field _r. */
+    double r() const;
+
     /** Screen display of a circle. */
     void display(int windowWidth, int windowHeight);
+
+    /** Value of the preference function accoding to the given point. */
+    double PFValue(const Point &p);
 
 
 
@@ -54,4 +63,6 @@ private:
 
 };
 
+/** Distance from circle to point. */
+double distance(Circle circle, Point point);
 #endif // CIRCLE_H

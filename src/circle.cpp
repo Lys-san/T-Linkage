@@ -15,7 +15,7 @@ Circle::Circle(const Point &a, const Point &b, const Point &c) {
 Circle::~Circle() {};
 
 std::pair<Point, double> Circle::circleAttributesFromPoints(const Point &a, const Point &b, const Point &c) {
-    assert(areAligned({a, b, c}));
+    assert(!areAligned({a, b, c}));
 
     auto a_squaredNorm = a.x()*a.x() + a.y()*a.y();
     auto b_squaredNorm = b.x()*b.x() + b.y()*b.y();
@@ -34,7 +34,25 @@ std::pair<Point, double> Circle::circleAttributesFromPoints(const Point &a, cons
     return std::make_pair(p, r);
 }
 
+Point Circle::p() const {
+    return _p;
+}
+
+double Circle::r() const {
+    return _r;
+}
+
 void Circle::display(int windowWidth, int windowHeight) {
     auto tmp = _p.scale(windowWidth, windowHeight);
     Imagine::drawCircle(tmp.x(), tmp.y(), _r * (windowWidth + windowHeight)/2, Imagine::BLACK);
+}
+
+double Circle::PFValue(const Point &p) {
+    return distance(*this, p) < 5*TAU ? exp(-distance(*this, p)/TAU) : 0;
+}
+
+//////////////////////////////////////////////////////////////////
+
+double distance(Circle circle, Point point) {
+    return std::abs(sqrt(squaredDistance(circle.p(), point)) - circle.r());
 }

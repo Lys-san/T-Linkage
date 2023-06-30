@@ -238,7 +238,7 @@ Point Line::randomPoint() {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-
+/** Distance from line to point. */
 double distance(Line line, Point point) {
     if(line.a() == INFTY) {
         return std::abs(line.p1().x() - point.x());
@@ -266,7 +266,7 @@ std::vector<double> computePreferenceFunctionFor(const Point &point, const std::
 
 bool areAligned(std::vector<Point> points) {
     assert(points.size() >= 2);
-    double threshold = 0.0001;
+    double threshold = 0.001;
 
     if(points.size() == 2) {
         return true; // 2 points are always aligned

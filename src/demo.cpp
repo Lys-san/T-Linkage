@@ -80,7 +80,9 @@ int main(int argc, char **argv) {
         // random point generation
         dataSet = PointPool::generateRandomDataSetOfSize(3);
 
-
+        for(auto point : dataSet) {
+            point->display(windowWidth, windowHeight);
+        }
 
         auto circle = Circle(*dataSet[0], *dataSet[1], *dataSet[2]);
         circle.display(windowWidth, windowHeight);
