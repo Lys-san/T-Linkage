@@ -105,7 +105,7 @@ void Point::reject() {
     _isInlier = false;
 }
 
-Point Point::scale(double xScale, double yScale) {
+Point Point::scale(double xScale, double yScale) const {
     return Point(xScale * this->_x, yScale * this->_y);
 }
 

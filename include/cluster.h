@@ -16,6 +16,7 @@
 #include "line.h"
 #include "pointpool.h"
 #include "image.h"
+#include "circle.h"
 
 
 /** Represents a cluster of points, which can eventually be view as a model hypothesis.
@@ -139,6 +140,16 @@ public:
             );
 
     /**
+     *  Computes and returns the preference function of the cluster,
+     *  defined as the vector of PF minimums for each point contained
+     *  in the cluster.
+     */
+    std::vector<double> computePF(
+            const std::vector<Circle> &models,
+            PointPool &dataSet
+            );
+
+    /**
      * @return true if all points were validated.
      */
     bool isModel();
@@ -183,6 +194,13 @@ bool link(
         std::vector<Cluster> &clusters,
         PointPool &dataSet,
         const std::vector<Line> &models
+        );
+
+/** Performs linking action and updates given parameters. */
+bool link(
+        std::vector<Cluster> &clusters,
+        PointPool &dataSet,
+        const std::vector<Circle> &models
         );
 
 /** (DEPRECATED) Validates the n biggest clusters contained in the given vector. */

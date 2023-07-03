@@ -81,12 +81,10 @@ std::vector<Line> Line::drawModels(unsigned int n, const PointPool &dataSet) {
     std::vector<Line> models; // our set of clusters
 
     int index = 0;
-    std::set<int> indexes; // drawn indexes
 
     // building clusters until no more points in data set
     while(models.size()  < N_MODELS_TO_DRAW) {
         auto insert = true;
-
 
         // retrieve a first new random point from data set
         int i;
@@ -111,7 +109,7 @@ std::vector<Line> Line::drawModels(unsigned int n, const PointPool &dataSet) {
         }
 
         if(insert) {
-            models.emplace_back(Line(*p1, *p2));
+            models.emplace_back(model);
         }
     }
     std::cout<< "[DEBUG] End of random sampling. Generated "

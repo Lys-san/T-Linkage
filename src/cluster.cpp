@@ -219,6 +219,33 @@ std::vector<double> Cluster::computePF(const std::vector<Line> &models, PointPoo
     return pf;
 }
 
+std::vector<double> Cluster::computePF(const std::vector<Circle> &models, PointPool &dataSet) {
+    assert(size() > 0);
+
+    std::vector<double> pf;
+
+//    if(size() == 1) {
+//        return computePreferenceFunctionFor(_points[0], models);
+//    }
+
+    // find min PF value for each model
+    for(auto model : models) {
+        auto min = model.PFValue(*_points.at(0)); // temporary min value
+        // compare for each point to find min
+        for(auto point : _points) {
+            auto tmp = model.PFValue(*point);
+            if(tmp < min) {
+                min = tmp;
+                if(tmp == 0.) {
+                    break; // no need to do more computation !
+                }
+            }
+        }
+        pf.emplace_back(min);
+    }
+    return pf;
+}
+
 bool Cluster::isModel() {
     for(auto point : _points) {
         if(!point->isInlier()) {
@@ -246,6 +273,55 @@ double tanimoto(std::vector<double> a, std::vector<double> b) {
 }
 
 bool link(std::vector<Cluster> &clusters, PointPool &dataSet, const std::vector<Line> &models) {
+    int iFirst     = 0;     // index of first cluster to link
+    int iSecond    = 0;     // index of second cluster to link
+    double minDist = 1.;    // min. distance between clusters PS (default : 1.)
+    bool linkable  = false; // do we apply link operation on clusters or not
+    int i          = 0;     // first loop index
+    int j          = 0;     // second loop index
+
+
+    // find closest clusters according to jaccard distance
+    for(auto c1 : clusters) {
+        j = 0;
+        auto pf1 = c1.computePF(models, dataSet);
+        // for each other buffer
+        for(auto c2 : clusters) {
+            auto pf2 = c2.computePF(models, dataSet);
+            // compare indexes so we don't try to merge a cluster with itself
+            double dist = i != j ? tanimoto(pf1, pf2) : 1.;
+
+            if(dist < minDist) {
+                minDist = dist;
+                iFirst = i;
+                iSecond = j;
+                linkable = true;
+            }
+            j++;
+        }
+        i++;
+    }
+
+    // merge
+    if(linkable) {
+        // the second cluster should be the smallest for faster merging
+        if(clusters[iFirst].size() < clusters[iSecond].size()) {
+            auto tmp = iFirst;
+            iFirst = iSecond;
+            iSecond = tmp;
+        }
+
+        Cluster &mergingCluster = clusters[iFirst];
+
+        mergingCluster.addPoints(clusters[iSecond].points());
+
+        // erase second buffer
+        clusters.erase(clusters.begin() + iSecond);
+    }
+    return linkable;
+}
+
+bool link(std::vector<Cluster> &clusters, PointPool &dataSet, const std::vector<Circle> &models) {
     int iFirst     = 0;     // index of first cluster to link
     int iSecond    = 0;     // index of second cluster to link
     double minDist = 1.;    // min. distance between clusters PS (default : 1.)

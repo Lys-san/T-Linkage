@@ -22,10 +22,19 @@ public:
 
     Circle(const Point &p, double radius);
 
-    Circle(const Point &a, const Point &b, const Point &c);
+    /** Takes the window dimensions for the radius to be scaled if the image isn't a square. */
+    Circle(const Point &a, const Point &b, const Point &c, int windowWidth, int windowHeight);
 
     /** Destructor*/
     ~Circle();
+
+    /**
+     * == operator redefinition for circle objects.
+     *
+     * @param other comparing circle
+     * @return true if the current circle is exactly the same as the other one.
+     */
+    bool operator==(const Circle &other) const;
 
     /** Accessor for private field _p. */
     Point p() const;
@@ -39,7 +48,8 @@ public:
     /** Value of the preference function accoding to the given point. */
     double PFValue(const Point &p);
 
-
+    /** Draws and returns n circle models from the given data set. */
+    static std::vector<Circle> drawModels(unsigned int n, const PointPool &dataSet, int windowWidth, int windowHeight);
 
 
 

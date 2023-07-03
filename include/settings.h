@@ -38,7 +38,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // adjust these parameters for testing with an input image
 
-#define DEFAULT_IMAGE "cat_caffe.jpg" // image to load from the input folder
+#define DEFAULT_IMAGE "shapes.jpg" // image to load from the input folder
 #define CANNY_THRESHOLD_1 100 // default : 100
 #define CANNy_THRESHOLD_2 3*CANNY_THRESHOLD_1
 #define FILTER_VALUE  10        // must be > 1 (the more the value gets the less points will be kept)

@@ -135,7 +135,7 @@ public:
     /** Returns a point created by scaling the current point according
      *  to the given xScale and yScale parameters.
      *  This function is to be used only for screen display. */
-    Point scale(double xScale, double yScale);
+    Point scale(double xScale, double yScale) const;
 
     /** Disturb the coordinate of the point. */
     void addNoise();
